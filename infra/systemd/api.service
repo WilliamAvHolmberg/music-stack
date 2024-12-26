@@ -1,0 +1,17 @@
+[Unit]
+Description=${PROJECT_NAME} API
+After=network.target
+
+[Service]
+WorkingDirectory=${DEPLOY_PATH}/api
+ExecStart=/usr/bin/dotnet Api.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=${PROJECT_NAME}-api
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target 

@@ -1,0 +1,449 @@
+# Project Overview
+This is a full-stack application with:
+- `/web`: Vite + React + TypeScript frontend with TailwindCSS and shadcn/ui
+- `/Api`: .NET 8 backend with SQLite and Entity Framework
+
+# AI Development Guidelines
+
+## General Principles
+1. **Self-Improvement**: Always suggest updates to .cursorrules when you notice patterns that could be improved
+2. **Code Generation**: Generate complete, production-ready code that follows all best practices
+3. **Error Prevention**: Proactively prevent common issues by following strict patterns
+4. **Review-Friendly**: Generate code in small, logical chunks that are easy to review
+5. **Documentation**: Add clear comments for complex logic and generate documentation when needed
+6. **Code Boundaries**: Only modify code directly related to the current task. Never touch unrelated code, even if improvements are possible
+7. **Future Improvements**: When noticing potential improvements outside the current task's scope, add them to `.ideas` file instead of implementing them
+8. **File Access**: Never attempt to edit files without explicit access. Ask the user to:
+   - Use @ to reference files in the codebase
+   - Manually attach files to the conversation
+   - Grant necessary permissions
+
+## Improvement Tracking
+The `.ideas` file in the root directory tracks potential improvements and technical debt. When you notice something that could be improved but is outside your current task's scope:
+1. Don't implement the improvement
+2. Add it to `.ideas` with:
+   - Clear description of the improvement
+   - Why it would be beneficial
+   - Which files/components would be affected
+   - Rough effort estimate
+   - Priority level (Low/Medium/High)
+
+## Backend (.NET) Guidelines
+
+### Project Structure
+```
+Api/
+├── Source/
+│   ├── Domain/           # Business domain features
+│   │   ├── {Feature}/   # e.g., Flashcards
+│   │   │   ├── Controllers/
+│   │   │   ├── Models/
+│   │   │   │   ├── Requests/    # DTOs for incoming requests
+│   │   │   │   ├── Responses/   # DTOs for outgoing responses
+│   │   │   │   └── *.cs         # Domain models
+│   │   │   └── Services/
+│   ├── Capabilities/     # Cross-cutting technical capabilities
+│   │   └── {Capability}/ # e.g., AI, SMS, W3C
+│   └── Shared/          # Shared infrastructure and utilities
+│       ├── Infrastructure/
+│       └── Utils/
+└── Tests/               # Test projects mirror Source structure
+```
+
+### Coding Standards
+1. **Naming**
+   - PascalCase for all files and directories
+   - Controllers: `{Feature}Controller.cs`
+   - Models: Singular form
+   - Interfaces: 'I' prefix
+   - Request DTOs: 'Request' suffix
+   - Response DTOs: 'Response' suffix
+
+2. **Namespaces**
+   - Root: `Api`
+   - Domain: `Api.{Feature}`
+   - Capabilities: `Api.{Capability}`
+   - Shared: `Api.Shared.{Category}`
+
+3. **Controllers**
+   ```csharp
+   [ApiController]
+   [Route("api/[controller]")]
+   public class FeatureController : ControllerBase
+   {
+       private readonly IFeatureService _service;
+       private readonly ILogger<FeatureController> _logger;
+
+       [HttpPost]
+       public async Task<ActionResult<T>> Method()
+       {
+           try
+           {
+               return Ok(result);
+           }
+           catch (Exception ex)
+           {
+               _logger.LogError(ex, "Error message");
+               return StatusCode(500, "User-friendly message");
+           }
+       }
+   }
+   ```
+
+4. **Models**
+   ```csharp
+   // Domain Models
+   public class DomainModel
+   {
+       public int Id { get; set; }
+       public required string Name { get; set; }
+       
+       [JsonIgnore]
+       public RelatedEntity? Related { get; set; }
+   }
+
+   // DTOs
+   public record RequestDto(
+       [Required] string Title,
+       string? Description
+   );
+   ```
+
+5. **Database**
+   ```csharp
+   protected override void OnModelCreating(ModelBuilder modelBuilder)
+   {
+       modelBuilder.Entity<Entity>(entity =>
+       {
+           entity.HasMany(e => e.Children)
+               .WithOne(e => e.Parent)
+               .HasForeignKey(e => e.ParentId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+           entity.HasIndex(e => e.SearchableColumn);
+       });
+   }
+   ```
+
+6. **API Responses**
+   ```json
+   // Collection Response Format
+   {
+       "items": [],
+       "totalCount": 0,
+       "pageSize": 20,
+       "currentPage": 1,
+       "totalPages": 1
+   }
+   ```
+
+## Frontend (React) Guidelines
+
+### Project Structure
+```
+web/
+├── src/
+│   ├── features/         # Feature-based components and logic
+│   │   └── {Feature}/   # e.g., Flashcards
+│   │       ├── components/  # Feature-specific components
+│   │       ├── hooks/      # Feature-specific hooks
+│   │       └── pages/      # Feature pages/routes
+│   └── shared/          # Shared code across features
+       ├── api/          # Auto-generated API types and hooks
+       │   ├── hooks/    # Generated API hooks (from Orval)
+       │   └── models/   # Generated DTOs and types
+       ├── components/   # Shared components
+       │   └── ui/      # shadcn/ui components
+       ├── hooks/       # Shared hooks
+       └── utils/       # Shared utilities
+
+### Auto-Generated API Integration
+1. **Type Generation**
+   - API types are auto-generated from Swagger/OpenAPI using Orval
+   - Never manually create types that match API DTOs
+   - Always import types from `@/shared/api/models`
+
+2. **API Hooks**
+   - Use auto-generated hooks from `@/shared/api/hooks/api`
+   - Hooks follow TanStack Query patterns
+   - Example:
+   ```typescript
+   import { useGetApiFlashcardsId } from '@/shared/api/hooks/api';
+   import type { FlashcardDTO } from '@/shared/api/models';
+
+   export function FlashcardView({ id }: { id: number }): JSX.Element {
+     const { data, isLoading } = useGetApiFlashcardsId(id, {});
+     // ...
+   }
+   ```
+
+3. **Type Safety**
+   - Always handle nullable/optional fields from DTOs
+   - Use type assertions only after runtime checks
+   - Example:
+   ```typescript
+   const card = data?.flashcards[0];
+   if (!card?.id) return null;
+   
+   // After check, we can assert the type
+   const validCard = card as Required<Pick<FlashcardDTO, 'id'>> & FlashcardDTO;
+   ```
+
+### Feature Organization
+1. **Feature Module Structure**
+   ```
+   features/flashcards/
+   ├── components/       # Feature-specific components
+   │   ├── card-list.tsx
+   │   └── card-editor.tsx
+   ├── hooks/           # Feature-specific hooks
+   │   └── use-card-actions.ts
+   └── pages/          # Feature pages/routes
+       ├── flashcard-sets.tsx
+       └── study-flashcards.tsx
+   ```
+
+2. **Feature Isolation**
+   - Keep feature-specific code within its directory
+   - Share common code through shared/ directory
+   - Use relative imports within features
+   - Use absolute imports for shared code
+
+3. **Component Organization**
+   - Pages: Complex components that represent routes
+   - Components: Reusable pieces within the feature
+   - Hooks: Feature-specific business logic
+
+4. **Naming Conventions**
+   - Features: Plural noun (e.g., flashcards, users)
+   - Pages: Kebab-case (e.g., create-flashcard.tsx)
+   - Components: PascalCase (e.g., FlashcardEditor.tsx)
+   - Hooks: Camel case with use prefix (e.g., useCardActions.ts)
+
+### Shared Code Guidelines
+1. **Component Placement**
+   - UI components: shared/components/ui
+   - Complex shared components: shared/components
+   - Feature-specific components: features/{feature}/components
+
+2. **Hook Organization**
+   - API hooks: shared/api/hooks
+   - Generic hooks: shared/hooks
+   - Feature hooks: features/{feature}/hooks
+
+3. **Type Organization**
+   - API types: shared/api/models
+   - Generic types: shared/types
+   - Feature types: Colocate with feature code
+
+4. **Utility Functions**
+   - Keep in shared/utils
+   - Group by domain (e.g., date-utils.ts, string-utils.ts)
+   - Export through index.ts barrel files
+
+### Available UI Components
+1. **Directly Installable shadcn/ui Components**
+   ```bash
+   npx shadcn@latest add accordion alert alert-dialog aspect-ratio avatar badge button card checkbox collapsible command context-menu dialog drawer dropdown-menu form hover-card input label menubar navigation-menu popover progress radio-group scroll-area select separator sheet skeleton slider switch table tabs textarea toast toggle toggle-group tooltip
+   ```
+
+2. **Composite Components**
+   - Breadcrumb
+   - Calendar
+   - Carousel
+   - Chart
+   - Combobox (uses Command component)
+   - Data Table (uses Table component)
+   - Date Picker (uses Calendar component)
+   - Input OTP
+   - Pagination
+   - Resizable
+   - Sidebar
+   - Sonner
+
+### Performance Best Practices
+1. **Component Structure**
+   - Keep components small and focused
+   - Use TypeScript interfaces for props
+   - Implement proper error boundaries
+   - Use React.Suspense for loading states
+
+2. **Data Fetching**
+   - Always use TanStack Query hooks
+   - Implement proper error handling
+   - Use suspense mode when appropriate
+   - Cache invalidation strategies
+
+3. **Styling**
+   - Use Tailwind CSS classes
+   - Follow the project's design system
+   - Maintain consistent spacing
+   - Use responsive design patterns
+
+4. **Bundle Optimization**
+   - Use dynamic imports for code splitting
+   - Optimize images and assets
+   - Monitor bundle size
+
+### Coding Standards
+1. **Components**
+   ```typescript
+   // Always use TypeScript interfaces
+   interface Props {
+     title: string;
+     onAction: () => void;
+   }
+   
+   // Use function components with explicit return type
+   export function MyComponent({ title, onAction }: Props): JSX.Element {
+     return (
+       <div className="space-y-4">
+         <h1>{title}</h1>
+         <Button onClick={onAction}>Action</Button>
+       </div>
+     );
+   }
+   ```
+
+2. **API Integration**
+   ```typescript
+   // Create type-safe API clients
+   export const useNotes = () => {
+     return useQuery({
+       queryKey: ['notes'],
+       queryFn: async () => {
+         const response = await fetch('/api/notes');
+         return response.json() as Promise<Note[]>;
+       },
+     });
+   };
+   ```
+
+3. **State Management**
+   - Use TanStack Query for server state
+   - Use Zustand for complex client state
+   - Use React Context sparingly
+
+### Component Library Usage
+1. **shadcn/ui**
+   - Always use provided components over custom ones
+   - Follow the component composition pattern
+   ```typescript
+   import { Card, CardHeader, CardTitle } from "@/shared/components/ui/card";
+   import { Button } from "@/shared/components/ui/button";
+   
+   export function NoteCard({ note }: { note: Note }): JSX.Element {
+     return (
+       <Card>
+         <CardHeader>
+           <CardTitle>{note.title}</CardTitle>
+         </CardHeader>
+       </Card>
+     );
+   }
+   ```
+
+## Testing Guidelines
+1. **Backend**
+   - Use xUnit for unit tests
+   - Use WebApplicationFactory for integration tests
+   - Mock external dependencies
+
+2. **Frontend**
+   - Use Vitest for unit tests
+   - Use React Testing Library for component tests
+   - Use MSW for API mocking
+
+## Error Handling
+1. **Backend**
+   ```csharp
+   public async Task<T> HandleAsync<T>(Func<Task<T>> action)
+   {
+       try
+       {
+           return await action();
+       }
+       catch (Exception ex)
+       {
+           // Log and transform to appropriate response
+           throw new ApiException(ex);
+       }
+   }
+   ```
+
+2. **Frontend**
+   ```typescript
+   const { data, error } = useQuery({
+     queryKey: ['data'],
+     queryFn: async () => {
+       try {
+         return await api.getData();
+       } catch (error) {
+         toast.error('Failed to fetch data');
+         throw error;
+       }
+     },
+   });
+   ```
+
+## Performance Guidelines
+1. **Backend**
+   - Use async/await consistently
+   - Implement caching where appropriate
+   - Use proper indexing for database queries
+
+2. **Frontend**
+   - Implement code splitting
+   - Use proper React.memo and useMemo
+   - Optimize images and assets
+
+## Security Guidelines
+1. **Backend**
+   - Validate all inputs
+   - Use proper authentication/authorization
+   - Sanitize all outputs
+
+2. **Frontend**
+   - Sanitize user inputs
+   - Use proper CSRF protection
+   - Implement proper auth state management
+
+# Live Document Notice
+This document should evolve with the project. The AI should suggest updates when:
+1. New patterns emerge
+2. Better practices are identified
+3. Common issues are discovered
+4. New tools or libraries are added
+
+## Feature-Based Organization
+
+### Purpose
+1. **Isolation**: Each feature is self-contained with its own controllers, models, and services
+2. **Review Efficiency**: Changes are localized, making code reviews focused and manageable
+3. **AI-Friendly**: Clear boundaries for AI code generation and modifications
+4. **Scalability**: New features can be added without touching existing code
+
+### Feature Structure
+```
+Domain/
+└── {Feature}/           # e.g., Flashcards/
+    ├── Controllers/     # HTTP endpoints
+    ├── Models/         
+    │   ├── Requests/   # Input DTOs
+    │   ├── Responses/  # Output DTOs
+    │   └── *.cs        # Domain models
+    └── Services/       # Business logic
+```
+
+### Feature Guidelines
+1. **Boundaries**
+   - Keep feature code within its directory
+   - Share code through Capabilities or Shared only when necessary
+   - Don't modify other features when adding new ones
+
+2. **Changes**
+   - Limit changes to single feature at a time
+   - Document cross-feature impacts in PRs
+   - Update only relevant feature tests
+
+

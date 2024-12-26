@@ -1,0 +1,27 @@
+# Future Improvements and Technical Debt
+
+This file tracks potential improvements that are identified during development but are outside the scope of current tasks.
+
+## Template
+```
+### [Title of Improvement]
+Description: [Clear description of what needs to be improved]
+Why: [Why this improvement would be beneficial]
+Affected Files: [List of files/components that would need changes]
+Effort: [Rough estimate: Small (hours), Medium (days), Large (weeks)]
+Priority: [Low/Medium/High]
+Added: [Date]
+```
+
+## Current Ideas
+
+### Example: Add Common Directory for Shared Utilities
+Description: Create a /Common directory in the API project for shared utilities, extensions, and helpers
+Why: Better organization of shared code, prevents duplication, easier to maintain
+Affected Files: 
+- Api/Program.cs (add new namespace)
+- Various utility files to be moved
+- New files in Common directory
+Effort: Small
+Priority: Medium
+Added: 2023-12-21 

@@ -24,7 +24,7 @@ public class W3Service : IW3Service
     public W3Service(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "Bilberry Workshop Test Suite");
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "Accessability Analyzer");
     }
 
     public async Task<W3ValidationResponse> ValidateHtmlAsync(string html)

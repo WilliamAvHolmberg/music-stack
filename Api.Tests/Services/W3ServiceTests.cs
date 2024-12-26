@@ -1,4 +1,5 @@
-using Api.Services;
+using Api.AI;
+using Api.W3;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Api.Tests.Services;

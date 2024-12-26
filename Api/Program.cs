@@ -1,8 +1,7 @@
 using Serilog;
-using Api.Flashcards;
-using Api.Reviews;
 using Api.W3;
 using Api.AI;
+using Api.WebScraping;
 using Api.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Api.Infrastructure;
@@ -70,6 +69,9 @@ try
     // Add W3 HTML validation service
     builder.Services.AddScoped<IW3Service, W3Service>();
 
+    // Add Web Scraping service
+    builder.Services.AddScoped<IWebScraperService, PlaywrightScraperService>();
+
     // Add SQLite
     var dbPath = builder.Environment.IsProduction() 
         ? Path.Combine(Environment.GetEnvironmentVariable("DEPLOY_PATH") ?? "", settings.Database.SqlitePath)
@@ -95,10 +97,6 @@ try
             _ => sp.GetRequiredService<OpenAIService>()
         };
     });
-
-    builder.Services.AddScoped<IPromptService, PromptService>();
-    builder.Services.AddScoped<IReviewService, ReviewService>();
-    builder.Services.AddScoped<IFlashcardService, FlashcardService>();
 
     // Add HttpContextAccessor for request context
     builder.Services.AddHttpContextAccessor();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Hosting;
-using Api.Data;
+using Api.Infrastructure;
 
 namespace Api.Tests;
 

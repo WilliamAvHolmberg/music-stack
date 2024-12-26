@@ -1,4 +1,4 @@
-import { GraduationCap, Library } from 'lucide-react';
+import { GraduationCap, Library, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/shared/utils/utils';
 import { AIModelSelector } from '../../features/ai/ai-model-selector';
@@ -12,6 +12,12 @@ export function Header() {
       label: "Flashcards",
       icon: Library,
       active: location.pathname.startsWith("/flashcards")
+    },
+    {
+      href: "/scraping-test",
+      label: "Scraping Test",
+      icon: Globe,
+      active: location.pathname.startsWith("/scraping-test")
     }
   ];
 
@@ -21,7 +27,7 @@ export function Header() {
         <div className="flex h-16 items-center">
           <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6" />
-            <span className="font-bold">Workshop Starter</span>
+            <span className="font-bold">Accessability Analyzer</span>
           </Link>
           <nav className="flex-1 flex items-center justify-center space-x-6">
             {navItems.map(({ href, label, icon: Icon, active }) => (

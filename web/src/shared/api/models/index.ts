@@ -20,4 +20,6 @@ export * from './relationshipDTO';
 export * from './reviewRequestDTO';
 export * from './reviewStatisticsDTO';
 export * from './reviewStatisticsDTOReviewsByDay';
+export * from './scrapeUrlRequestDTO';
+export * from './scrapeUrlResponseDTO';
 export * from './studyStructureDTO';

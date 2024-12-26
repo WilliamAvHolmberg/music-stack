@@ -23,3 +23,6 @@ export * from './reviewStatisticsDTOReviewsByDay';
 export * from './scrapeUrlRequestDTO';
 export * from './scrapeUrlResponseDTO';
 export * from './studyStructureDTO';
+export * from './validateHtmlRequestDTO';
+export * from './w3ValidationMessageDTO';
+export * from './w3ValidationResponseDTO';

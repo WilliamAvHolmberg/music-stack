@@ -29,7 +29,9 @@ import type {
 import type {
   HealthStatusDTO,
   ScrapeUrlRequestDTO,
-  ScrapeUrlResponseDTO
+  ScrapeUrlResponseDTO,
+  ValidateHtmlRequestDTO,
+  W3ValidationResponseDTO
 } from '../models'
 import { customClient } from '../client';
 import type { ErrorType } from '../client';
@@ -181,6 +183,59 @@ export function useGetApiHealth<TData = Awaited<ReturnType<typeof getApiHealth>>
 
 
 
+export const postApiW3Validate = (
+    validateHtmlRequestDTO: ValidateHtmlRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<W3ValidationResponseDTO>(
+      {url: `/api/W3/validate`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: validateHtmlRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiW3ValidateMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiW3Validate>>, TError,{data: ValidateHtmlRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiW3Validate>>, TError,{data: ValidateHtmlRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiW3Validate>>, {data: ValidateHtmlRequestDTO}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiW3Validate(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiW3ValidateMutationResult = NonNullable<Awaited<ReturnType<typeof postApiW3Validate>>>
+    export type PostApiW3ValidateMutationBody = ValidateHtmlRequestDTO
+    export type PostApiW3ValidateMutationError = ErrorType<unknown>
+
+    export const usePostApiW3Validate = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiW3Validate>>, TError,{data: ValidateHtmlRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiW3Validate>>,
+        TError,
+        {data: ValidateHtmlRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiW3ValidateMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
 export const postApiWebScraperScrape = (
     scrapeUrlRequestDTO: ScrapeUrlRequestDTO,
  signal?: AbortSignal

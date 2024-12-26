@@ -1,4 +1,4 @@
-import { GraduationCap, Library, Globe } from 'lucide-react';
+import { GraduationCap, Library, Globe, Code2 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/shared/utils/utils';
 import { AIModelSelector } from '../../features/ai/ai-model-selector';
@@ -18,6 +18,12 @@ export function Header() {
       label: "Scraping Test",
       icon: Globe,
       active: location.pathname.startsWith("/scraping-test")
+    },
+    {
+      href: "/w3-validator",
+      label: "W3 Validator",
+      icon: Code2,
+      active: location.pathname.startsWith("/w3-validator")
     }
   ];
 

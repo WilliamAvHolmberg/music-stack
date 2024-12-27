@@ -2,6 +2,9 @@ using Serilog;
 using Api.W3;
 using Api.AI;
 using Api.WebScraping;
+using Api.Accessibility;
+using Api.Accessibility.Services;
+using Api.Accessibility.Services.Rules;
 using Api.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Api.Infrastructure;
@@ -71,6 +74,10 @@ try
 
     // Add Web Scraping service
     builder.Services.AddScoped<IWebScraperService, PlaywrightScraperService>();
+
+    // Add Accessibility services
+    builder.Services.AddScoped<IRuleEngine, RuleEngine>();
+    builder.Services.AddScoped<IAccessibilityAnalyzer, AccessibilityAnalyzer>();
 
     // Add SQLite
     var dbPath = builder.Environment.IsProduction() 

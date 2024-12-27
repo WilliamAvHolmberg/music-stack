@@ -5,7 +5,13 @@
  * OpenAPI spec version: v1
  */
 
+export * from './accessibilityIssueDTO';
+export * from './accessibilityIssueGroupDTO';
+export * from './accessibilitySectionDTO';
+export * from './analysisResultDTO';
+export * from './analyzeHtmlRequestDTO';
 export * from './analyzeRequestDTO';
+export * from './analyzeUrlRequestDTO';
 export * from './answerAnalysisDTO';
 export * from './conceptDTO';
 export * from './flashcardDTO';

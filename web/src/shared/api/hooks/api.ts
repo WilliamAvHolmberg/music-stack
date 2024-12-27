@@ -27,6 +27,8 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
+  AnalysisResultDTO,
+  AnalyzeUrlRequestDTO,
   HealthStatusDTO,
   ScrapeUrlRequestDTO,
   ScrapeUrlResponseDTO,
@@ -38,6 +40,59 @@ import type { ErrorType } from '../client';
 
 
 
+export const postApiAccessibilityAnalyze = (
+    analyzeUrlRequestDTO: AnalyzeUrlRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<AnalysisResultDTO>(
+      {url: `/api/Accessibility/analyze`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: analyzeUrlRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiAccessibilityAnalyzeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, TError,{data: AnalyzeUrlRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, TError,{data: AnalyzeUrlRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, {data: AnalyzeUrlRequestDTO}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiAccessibilityAnalyze(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiAccessibilityAnalyzeMutationResult = NonNullable<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>>
+    export type PostApiAccessibilityAnalyzeMutationBody = AnalyzeUrlRequestDTO
+    export type PostApiAccessibilityAnalyzeMutationError = ErrorType<unknown>
+
+    export const usePostApiAccessibilityAnalyze = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, TError,{data: AnalyzeUrlRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>,
+        TError,
+        {data: AnalyzeUrlRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiAccessibilityAnalyzeMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
 export const getApiHealth = (
     
  signal?: AbortSignal

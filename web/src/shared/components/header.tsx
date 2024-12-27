@@ -1,4 +1,4 @@
-import { GraduationCap, Library, Globe, Code2 } from 'lucide-react';
+import { GraduationCap, Library, Globe, Code2, Accessibility } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/shared/utils/utils';
 import { AIModelSelector } from '../../features/ai/ai-model-selector';
@@ -24,6 +24,12 @@ export function Header() {
       label: "W3 Validator",
       icon: Code2,
       active: location.pathname.startsWith("/w3-validator")
+    },
+    {
+      href: "/accessibility",
+      label: "Accessibility",
+      icon: Accessibility,
+      active: location.pathname.startsWith("/accessibility")
     }
   ];
 

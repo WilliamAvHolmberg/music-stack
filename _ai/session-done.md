@@ -1,0 +1,1 @@
+now look at this, update it with what we have done and then add to the plan of what we are gonna do in the future. Write a good summary that another AI can use later

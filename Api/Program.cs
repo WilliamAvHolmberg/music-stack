@@ -78,6 +78,7 @@ try
     // Add Accessibility services
     builder.Services.AddScoped<IRuleEngine, RuleEngine>();
     builder.Services.AddScoped<IAccessibilityAnalyzer, AccessibilityAnalyzer>();
+    builder.Services.AddScoped<ISection1Service, Section1Service>();
 
     // Add SQLite
     var dbPath = builder.Environment.IsProduction() 

@@ -151,7 +151,7 @@ web/
 │   └── shared/          # Shared code across features
        ├── api/          # Auto-generated API types and hooks
        │   ├── hooks/    # Generated API hooks (from Orval)
-       │   └── models/   # Generated DTOs and types
+       │   └─��� models/   # Generated DTOs and types
        ├── components/   # Shared components
        │   └── ui/      # shadcn/ui components
        ├── hooks/       # Shared hooks
@@ -445,5 +445,35 @@ Domain/
    - Limit changes to single feature at a time
    - Document cross-feature impacts in PRs
    - Update only relevant feature tests
+
+## Accessibility Analysis Guidelines
+
+### Element Selection
+1. **Target Meaningful Elements**
+   - Focus on semantic HTML elements (p, h1-h6, button, a, etc.)
+   - Only include container elements (div, span) if they have direct text content
+   - Skip purely decorative elements
+
+2. **Decorative Element Detection**
+   ```javascript
+   // Check for decorative indicators
+   - aria-hidden="true"
+   - role="presentation"
+   - opacity: 0
+   - display: none
+   - visibility: hidden
+   - Known decorative classes (e.g., gatsby-image-wrapper)
+   ```
+
+3. **Text Content Validation**
+   - Check for direct text nodes, not nested content
+   - Validate text-related rules only on text-containing elements
+   - Limit context snippets to reasonable size (e.g., 200 chars)
+
+4. **Issue Grouping**
+   - Group issues by section and rule type
+   - Include current values for context
+   - Limit examples to 3 per group
+   - Sort by impact and frequency
 
 

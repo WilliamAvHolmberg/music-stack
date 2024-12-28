@@ -345,8 +345,30 @@ public class AccessibilityAnalyzer : IAccessibilityAnalyzer
                 
                 // Skip pure container/structural elements
                 if (tagName === 'div' || tagName === 'span' || tagName === 'section') {
+                    // Check if it's decorative
+                    const isDecorative = 
+                        element.getAttribute('aria-hidden') === 'true' ||
+                        element.getAttribute('role') === 'presentation' ||
+                        element.classList.contains('gatsby-image-wrapper') ||
+                        element.classList.contains('gatsby-background-image-wrapper') ||
+                        element.classList.contains('material-icons');
+
+                    if (isDecorative) return false;
+
+                    // Check computed style for decorative properties
+                    const style = window.getComputedStyle(element);
+                    if (style.opacity === '0' ||
+                        style.display === 'none' ||
+                        style.visibility === 'hidden' ||
+                        (style.width === '0px' && style.height === '0px')) {
+                        return false;
+                    }
+
                     // Only include if it has direct text content or ARIA attributes
-                    return element.textContent.trim().length > 0 || 
+                    const hasDirectText = Array.from(element.childNodes)
+                        .some(node => node.nodeType === 3 && node.textContent.trim().length > 0);
+                    
+                    return hasDirectText || 
                            element.hasAttribute('aria-label') ||
                            element.hasAttribute('aria-description');
                 }

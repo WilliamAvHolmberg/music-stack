@@ -1,10 +1,24 @@
-# 🎵 Song Stack - An AI-Built Music Quiz Game
+# 🎵 Music Stack - An AI-Built Music Quiz Game
 
 > Built with AI pair programming (Cursor + Claude) - a fun experiment in AI-driven development
 
 ## 🤖 About This Project
 
-Song Stack is a modern take on music quiz games like "Name That Tune" or "Så ska det låta", built entirely through AI pair programming. This project showcases what's possible when human creativity meets AI capabilities, even if it doesn't always follow traditional best practices.
+Music Stack is a modern take on music quiz games like "Name That Tune" or "Så ska det låta", built entirely through AI pair programming. This project showcases what's possible when human creativity meets AI capabilities, even if it doesn't always follow traditional best practices.
+
+## 📸 Screenshots
+
+### Answer View
+![Answer View](media/answer.png)
+
+### Game Host Interface
+<img src="media/game-host.png" width="400" alt="Game Host Interface">
+
+### Game Templates
+![Game Templates](media/game-templates.png)
+
+### Listen Screen
+![Listen Screen](media/listen.png)
 
 ### 🎮 Game Features
 

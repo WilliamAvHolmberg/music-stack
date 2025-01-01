@@ -1,8 +1,9 @@
-import { 
-    HubConnection, 
-    HubConnectionBuilder, 
+import {
+    HubConnection,
+    HubConnectionBuilder,
     LogLevel,
-    HttpTransportType 
+    HttpTransportType,
+    HubConnectionState
 } from '@microsoft/signalr';
 import { useConnectionStore } from '../stores/connectionStore';
 
@@ -14,7 +15,7 @@ class SignalRService {
     private gameCallbacks: Map<number, (gameId: number) => void> = new Map();
 
     private async ensureConnection(): Promise<void> {
-        if (this.connection?.state === 'Connected') {
+        if (this.connection?.state === HubConnectionState.Connected) {
             return;
         }
 
@@ -61,7 +62,7 @@ class SignalRService {
                     lastReconnectAttempt: this.reconnectAttempt
                 });
             });
-            
+
             this.connection.onreconnecting((error) => {
                 useConnectionStore.getState().setStatus('connecting', 'Attempting to reconnect...');
                 console.warn('SignalR Reconnecting:', {
@@ -70,7 +71,7 @@ class SignalRService {
                     state: this.connection?.state
                 });
             });
-            
+
             this.connection.onreconnected((connectionId) => {
                 useConnectionStore.getState().setStatus('connected');
                 console.info('SignalR Reconnected:', {
@@ -137,7 +138,7 @@ class SignalRService {
 
     public async leaveGame(gameId: number): Promise<void> {
         try {
-            if (this.connection?.state !== 'Connected') {
+            if (this.connection?.state !== HubConnectionState.Connected) {
                 console.warn('Cannot leave game - not connected:', {
                     gameId,
                     state: this.connection?.state
@@ -164,7 +165,7 @@ class SignalRService {
     public onGameChanged(callback: (gameId: number) => void): () => void {
         if (!this.connection) {
             console.warn('Attempting to subscribe before connection exists');
-            return () => {};
+            return () => { };
         }
 
         // Store callback for resubscription

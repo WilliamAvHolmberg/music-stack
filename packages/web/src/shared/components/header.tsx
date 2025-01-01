@@ -39,7 +39,7 @@ export function Header() {
         <div className="flex h-16 items-center">
           <Link to="/" className="flex items-center space-x-2">
             <Music className="h-6 w-6" />
-            <span className="font-bold">Song Stack</span>
+            <span className="font-bold">Music Stack</span>
           </Link>
           <nav className="flex-1 flex items-center justify-center space-x-6">
             {navItems.map(({ href, label, icon: Icon, active }) => (

@@ -14,7 +14,7 @@ function WelcomePage() {
     <div className="max-w-4xl mx-auto space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>Welcome to Song Stack</CardTitle>
+          <CardTitle>Welcome to Music Stack</CardTitle>
           <CardDescription>
             Create and play music-based party games with your friends!
           </CardDescription>

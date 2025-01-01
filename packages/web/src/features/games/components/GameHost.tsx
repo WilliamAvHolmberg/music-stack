@@ -237,7 +237,7 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
 
     return (
         <GameLayout
-            title="Så ska det låta"
+            title="Musikquiz"
             stars={completedRounds}
             maxStars={game.rounds?.length || 0}
             layout="split"

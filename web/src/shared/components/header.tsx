@@ -1,4 +1,4 @@
-import { GraduationCap, Library, Globe, Code2, Accessibility } from 'lucide-react';
+import { GraduationCap, Library, Globe, Code2, Accessibility, Music, ListMusic, Layout, GamepadIcon, PlusCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/shared/utils/utils';
 import { AIModelSelector } from '../../features/ai/ai-model-selector';
@@ -8,28 +8,28 @@ export function Header() {
 
   const navItems = [
     {
-      href: "/flashcards",
-      label: "Flashcards",
-      icon: Library,
-      active: location.pathname.startsWith("/flashcards")
+      href: "/games",
+      label: "Games",
+      icon: GamepadIcon,
+      active: location.pathname === "/games"
     },
     {
-      href: "/scraping-test",
-      label: "Scraping Test",
-      icon: Globe,
-      active: location.pathname.startsWith("/scraping-test")
+      href: "/games/templates",
+      label: "Game Templates",
+      icon: Layout,
+      active: location.pathname.startsWith("/games/templates")
     },
     {
-      href: "/w3-validator",
-      label: "W3 Validator",
-      icon: Code2,
-      active: location.pathname.startsWith("/w3-validator")
+      href: "/games/new",
+      label: "New Game",
+      icon: PlusCircle,
+      active: location.pathname === "/games/new"
     },
     {
-      href: "/accessibility",
-      label: "Accessibility",
-      icon: Accessibility,
-      active: location.pathname.startsWith("/accessibility")
+      href: "/songs",
+      label: "Songs",
+      icon: ListMusic,
+      active: location.pathname.startsWith("/songs")
     }
   ];
 
@@ -38,8 +38,8 @@ export function Header() {
       <div className="container mx-auto">
         <div className="flex h-16 items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <GraduationCap className="h-6 w-6" />
-            <span className="font-bold">Accessability Analyzer</span>
+            <Music className="h-6 w-6" />
+            <span className="font-bold">Song Stack</span>
           </Link>
           <nav className="flex-1 flex items-center justify-center space-x-6">
             {navItems.map(({ href, label, icon: Icon, active }) => (

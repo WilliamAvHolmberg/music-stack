@@ -1,0 +1,1 @@
+reveal more and more of the text.

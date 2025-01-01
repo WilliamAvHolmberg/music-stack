@@ -27,47 +27,53 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
-  AnalysisResultDTO,
-  AnalyzeUrlRequestDTO,
+  CreateGameRequestDTO,
+  CreateGameTemplateRequestDTO,
+  CreateRoundRequestDTO,
+  CreateSongRequestDTO,
+  CreateTeamRequestDTO,
+  GameSessionResponseDTO,
+  GameTemplateResponseDTO,
   HealthStatusDTO,
-  ScrapeUrlRequestDTO,
-  ScrapeUrlResponseDTO,
-  ValidateHtmlRequestDTO,
-  W3ValidationResponseDTO
+  RoundResponseDTO,
+  SongCategoryDTO,
+  SongResponseDTO,
+  TeamResponseDTO,
+  UpdateGameStateRequestDTO
 } from '../models'
 import { customClient } from '../client';
 import type { ErrorType } from '../client';
 
 
 
-export const postApiAccessibilityAnalyze = (
-    analyzeUrlRequestDTO: AnalyzeUrlRequestDTO,
+export const postApiGames = (
+    createGameRequestDTO: CreateGameRequestDTO,
  signal?: AbortSignal
 ) => {
       
       
-      return customClient<AnalysisResultDTO>(
-      {url: `/api/Accessibility/analyze`, method: 'POST',
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: analyzeUrlRequestDTO, signal
+      data: createGameRequestDTO, signal
     },
       );
     }
   
 
 
-export const getPostApiAccessibilityAnalyzeMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, TError,{data: AnalyzeUrlRequestDTO}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, TError,{data: AnalyzeUrlRequestDTO}, TContext> => {
+export const getPostApiGamesMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGames>>, TError,{data: CreateGameRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiGames>>, TError,{data: CreateGameRequestDTO}, TContext> => {
 const {mutation: mutationOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, {data: AnalyzeUrlRequestDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiGames>>, {data: CreateGameRequestDTO}> = (props) => {
           const {data} = props ?? {};
 
-          return  postApiAccessibilityAnalyze(data,)
+          return  postApiGames(data,)
         }
 
         
@@ -75,20 +81,1475 @@ const {mutation: mutationOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiAccessibilityAnalyzeMutationResult = NonNullable<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>>
-    export type PostApiAccessibilityAnalyzeMutationBody = AnalyzeUrlRequestDTO
-    export type PostApiAccessibilityAnalyzeMutationError = ErrorType<unknown>
+    export type PostApiGamesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiGames>>>
+    export type PostApiGamesMutationBody = CreateGameRequestDTO
+    export type PostApiGamesMutationError = ErrorType<unknown>
 
-    export const usePostApiAccessibilityAnalyze = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>, TError,{data: AnalyzeUrlRequestDTO}, TContext>, }
+    export const usePostApiGames = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGames>>, TError,{data: CreateGameRequestDTO}, TContext>, }
 ): UseMutationResult<
-        Awaited<ReturnType<typeof postApiAccessibilityAnalyze>>,
+        Awaited<ReturnType<typeof postApiGames>>,
         TError,
-        {data: AnalyzeUrlRequestDTO},
+        {data: CreateGameRequestDTO},
         TContext
       > => {
 
-      const mutationOptions = getPostApiAccessibilityAnalyzeMutationOptions(options);
+      const mutationOptions = getPostApiGamesMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const getApiGames = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameSessionResponseDTO[]>(
+      {url: `/api/games`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiGamesQueryKey = () => {
+    return [`/api/games`] as const;
+    }
+
+    
+export const getGetApiGamesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiGames>>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiGamesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiGames>>> = ({ signal }) => getApiGames(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiGamesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiGames>>>
+export type GetApiGamesInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiGamesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGames>>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGames>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGamesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGames>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGames>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGamesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGames>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiGamesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGames>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiGamesInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiGamesQueryOptions = <TData = Awaited<ReturnType<typeof getApiGames>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiGamesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiGames>>> = ({ signal }) => getApiGames(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiGamesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiGames>>>
+export type GetApiGamesQueryError = ErrorType<unknown>
+
+
+export function useGetApiGames<TData = Awaited<ReturnType<typeof getApiGames>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGames>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGames<TData = Awaited<ReturnType<typeof getApiGames>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGames>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGames<TData = Awaited<ReturnType<typeof getApiGames>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiGames<TData = Awaited<ReturnType<typeof getApiGames>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGames>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiGamesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const getApiGamesId = (
+    id: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiGamesIdQueryKey = (id: number,) => {
+    return [`/api/games/${id}`] as const;
+    }
+
+    
+export const getGetApiGamesIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiGamesId>>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiGamesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiGamesId>>> = ({ signal }) => getApiGamesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiGamesIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiGamesId>>>
+export type GetApiGamesIdInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiGamesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGamesId>>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGamesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGamesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGamesId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGamesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGamesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGamesId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiGamesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiGamesId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiGamesIdInfiniteQueryOptions(id,options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiGamesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiGamesId>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiGamesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiGamesId>>> = ({ signal }) => getApiGamesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiGamesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiGamesId>>>
+export type GetApiGamesIdQueryError = ErrorType<unknown>
+
+
+export function useGetApiGamesId<TData = Awaited<ReturnType<typeof getApiGamesId>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGamesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGamesId<TData = Awaited<ReturnType<typeof getApiGamesId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiGamesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiGamesId<TData = Awaited<ReturnType<typeof getApiGamesId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiGamesId<TData = Awaited<ReturnType<typeof getApiGamesId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiGamesId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiGamesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const deleteApiGamesId = (
+    id: number,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/games/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiGamesIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiGamesId>>, TError,{id: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiGamesId>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiGamesId>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiGamesId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiGamesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiGamesId>>>
+    
+    export type DeleteApiGamesIdMutationError = ErrorType<unknown>
+
+    export const useDeleteApiGamesId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiGamesId>>, TError,{id: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiGamesId>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiGamesIdMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const postApiGamesGameIdTeams = (
+    gameId: number,
+    createTeamRequestDTO: CreateTeamRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<TeamResponseDTO>(
+      {url: `/api/games/${gameId}/teams`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createTeamRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiGamesGameIdTeamsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdTeams>>, TError,{gameId: number;data: CreateTeamRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdTeams>>, TError,{gameId: number;data: CreateTeamRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiGamesGameIdTeams>>, {gameId: number;data: CreateTeamRequestDTO}> = (props) => {
+          const {gameId,data} = props ?? {};
+
+          return  postApiGamesGameIdTeams(gameId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiGamesGameIdTeamsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiGamesGameIdTeams>>>
+    export type PostApiGamesGameIdTeamsMutationBody = CreateTeamRequestDTO
+    export type PostApiGamesGameIdTeamsMutationError = ErrorType<unknown>
+
+    export const usePostApiGamesGameIdTeams = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdTeams>>, TError,{gameId: number;data: CreateTeamRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiGamesGameIdTeams>>,
+        TError,
+        {gameId: number;data: CreateTeamRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiGamesGameIdTeamsMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const postApiGamesGameIdRounds = (
+    gameId: number,
+    createRoundRequestDTO: CreateRoundRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<RoundResponseDTO>(
+      {url: `/api/games/${gameId}/rounds`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createRoundRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiGamesGameIdRoundsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdRounds>>, TError,{gameId: number;data: CreateRoundRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdRounds>>, TError,{gameId: number;data: CreateRoundRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiGamesGameIdRounds>>, {gameId: number;data: CreateRoundRequestDTO}> = (props) => {
+          const {gameId,data} = props ?? {};
+
+          return  postApiGamesGameIdRounds(gameId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiGamesGameIdRoundsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiGamesGameIdRounds>>>
+    export type PostApiGamesGameIdRoundsMutationBody = CreateRoundRequestDTO
+    export type PostApiGamesGameIdRoundsMutationError = ErrorType<unknown>
+
+    export const usePostApiGamesGameIdRounds = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdRounds>>, TError,{gameId: number;data: CreateRoundRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiGamesGameIdRounds>>,
+        TError,
+        {gameId: number;data: CreateRoundRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiGamesGameIdRoundsMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const postApiGamesGameIdRoundsEnd = (
+    gameId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<RoundResponseDTO>(
+      {url: `/api/games/${gameId}/rounds/end`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiGamesGameIdRoundsEndMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdRoundsEnd>>, TError,{gameId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdRoundsEnd>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiGamesGameIdRoundsEnd>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  postApiGamesGameIdRoundsEnd(gameId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiGamesGameIdRoundsEndMutationResult = NonNullable<Awaited<ReturnType<typeof postApiGamesGameIdRoundsEnd>>>
+    
+    export type PostApiGamesGameIdRoundsEndMutationError = ErrorType<unknown>
+
+    export const usePostApiGamesGameIdRoundsEnd = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesGameIdRoundsEnd>>, TError,{gameId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiGamesGameIdRoundsEnd>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiGamesGameIdRoundsEndMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const postApiGamesIdEnd = (
+    id: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${id}/end`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiGamesIdEndMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesIdEnd>>, TError,{id: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiGamesIdEnd>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiGamesIdEnd>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  postApiGamesIdEnd(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiGamesIdEndMutationResult = NonNullable<Awaited<ReturnType<typeof postApiGamesIdEnd>>>
+    
+    export type PostApiGamesIdEndMutationError = ErrorType<unknown>
+
+    export const usePostApiGamesIdEnd = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesIdEnd>>, TError,{id: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiGamesIdEnd>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiGamesIdEndMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdTeamsTeamIdScore = (
+    gameId: number,
+    teamId: number,
+    putApiGamesGameIdTeamsTeamIdScoreBody: number,
+ ) => {
+      
+      
+      return customClient<TeamResponseDTO>(
+      {url: `/api/games/${gameId}/teams/${teamId}/score`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: putApiGamesGameIdTeamsTeamIdScoreBody
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdTeamsTeamIdScoreMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTeamsTeamIdScore>>, TError,{gameId: number;teamId: number;data: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTeamsTeamIdScore>>, TError,{gameId: number;teamId: number;data: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdTeamsTeamIdScore>>, {gameId: number;teamId: number;data: number}> = (props) => {
+          const {gameId,teamId,data} = props ?? {};
+
+          return  putApiGamesGameIdTeamsTeamIdScore(gameId,teamId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdTeamsTeamIdScoreMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdTeamsTeamIdScore>>>
+    export type PutApiGamesGameIdTeamsTeamIdScoreMutationBody = number
+    export type PutApiGamesGameIdTeamsTeamIdScoreMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdTeamsTeamIdScore = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTeamsTeamIdScore>>, TError,{gameId: number;teamId: number;data: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdTeamsTeamIdScore>>,
+        TError,
+        {gameId: number;teamId: number;data: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdTeamsTeamIdScoreMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const postApiGamesIdStart = (
+    id: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${id}/start`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiGamesIdStartMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesIdStart>>, TError,{id: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiGamesIdStart>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiGamesIdStart>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  postApiGamesIdStart(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiGamesIdStartMutationResult = NonNullable<Awaited<ReturnType<typeof postApiGamesIdStart>>>
+    
+    export type PostApiGamesIdStartMutationError = ErrorType<unknown>
+
+    export const usePostApiGamesIdStart = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiGamesIdStart>>, TError,{id: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiGamesIdStart>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiGamesIdStartMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdItemsNext = (
+    gameId: number,
+ ) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${gameId}/items/next`, method: 'PUT'
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdItemsNextMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsNext>>, TError,{gameId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsNext>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdItemsNext>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  putApiGamesGameIdItemsNext(gameId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdItemsNextMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdItemsNext>>>
+    
+    export type PutApiGamesGameIdItemsNextMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdItemsNext = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsNext>>, TError,{gameId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdItemsNext>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdItemsNextMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdItemsPrevious = (
+    gameId: number,
+ ) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${gameId}/items/previous`, method: 'PUT'
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdItemsPreviousMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsPrevious>>, TError,{gameId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsPrevious>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdItemsPrevious>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  putApiGamesGameIdItemsPrevious(gameId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdItemsPreviousMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdItemsPrevious>>>
+    
+    export type PutApiGamesGameIdItemsPreviousMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdItemsPrevious = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsPrevious>>, TError,{gameId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdItemsPrevious>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdItemsPreviousMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdTimerPause = (
+    gameId: number,
+ ) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${gameId}/timer/pause`, method: 'PUT'
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdTimerPauseMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerPause>>, TError,{gameId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerPause>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdTimerPause>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  putApiGamesGameIdTimerPause(gameId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdTimerPauseMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdTimerPause>>>
+    
+    export type PutApiGamesGameIdTimerPauseMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdTimerPause = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerPause>>, TError,{gameId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdTimerPause>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdTimerPauseMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdTimerResume = (
+    gameId: number,
+ ) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${gameId}/timer/resume`, method: 'PUT'
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdTimerResumeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerResume>>, TError,{gameId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerResume>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdTimerResume>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  putApiGamesGameIdTimerResume(gameId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdTimerResumeMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdTimerResume>>>
+    
+    export type PutApiGamesGameIdTimerResumeMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdTimerResume = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerResume>>, TError,{gameId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdTimerResume>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdTimerResumeMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdTimerReset = (
+    gameId: number,
+ ) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${gameId}/timer/reset`, method: 'PUT'
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdTimerResetMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerReset>>, TError,{gameId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerReset>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdTimerReset>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  putApiGamesGameIdTimerReset(gameId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdTimerResetMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdTimerReset>>>
+    
+    export type PutApiGamesGameIdTimerResetMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdTimerReset = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdTimerReset>>, TError,{gameId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdTimerReset>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdTimerResetMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdState = (
+    gameId: number,
+    updateGameStateRequestDTO: UpdateGameStateRequestDTO,
+ ) => {
+      
+      
+      return customClient<GameSessionResponseDTO>(
+      {url: `/api/games/${gameId}/state`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: updateGameStateRequestDTO
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdStateMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdState>>, TError,{gameId: number;data: UpdateGameStateRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdState>>, TError,{gameId: number;data: UpdateGameStateRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdState>>, {gameId: number;data: UpdateGameStateRequestDTO}> = (props) => {
+          const {gameId,data} = props ?? {};
+
+          return  putApiGamesGameIdState(gameId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdStateMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdState>>>
+    export type PutApiGamesGameIdStateMutationBody = UpdateGameStateRequestDTO
+    export type PutApiGamesGameIdStateMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdState = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdState>>, TError,{gameId: number;data: UpdateGameStateRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdState>>,
+        TError,
+        {gameId: number;data: UpdateGameStateRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdStateMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const putApiGamesGameIdItemsItemIdRevealToggle = (
+    gameId: number,
+    itemId: number,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/games/${gameId}/items/${itemId}/reveal/toggle`, method: 'PUT'
+    },
+      );
+    }
+  
+
+
+export const getPutApiGamesGameIdItemsItemIdRevealToggleMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsItemIdRevealToggle>>, TError,{gameId: number;itemId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsItemIdRevealToggle>>, TError,{gameId: number;itemId: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiGamesGameIdItemsItemIdRevealToggle>>, {gameId: number;itemId: number}> = (props) => {
+          const {gameId,itemId} = props ?? {};
+
+          return  putApiGamesGameIdItemsItemIdRevealToggle(gameId,itemId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiGamesGameIdItemsItemIdRevealToggleMutationResult = NonNullable<Awaited<ReturnType<typeof putApiGamesGameIdItemsItemIdRevealToggle>>>
+    
+    export type PutApiGamesGameIdItemsItemIdRevealToggleMutationError = ErrorType<unknown>
+
+    export const usePutApiGamesGameIdItemsItemIdRevealToggle = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiGamesGameIdItemsItemIdRevealToggle>>, TError,{gameId: number;itemId: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiGamesGameIdItemsItemIdRevealToggle>>,
+        TError,
+        {gameId: number;itemId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiGamesGameIdItemsItemIdRevealToggleMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const getApiTemplates = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameTemplateResponseDTO[]>(
+      {url: `/api/templates`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiTemplatesQueryKey = () => {
+    return [`/api/templates`] as const;
+    }
+
+    
+export const getGetApiTemplatesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplates>>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplates>>> = ({ signal }) => getApiTemplates(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiTemplatesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplates>>>
+export type GetApiTemplatesInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplates>>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplates>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplates>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplates>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplates>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplates>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiTemplatesInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplates>>> = ({ signal }) => getApiTemplates(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplates>>>
+export type GetApiTemplatesQueryError = ErrorType<unknown>
+
+
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplates>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplates>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiTemplates<TData = Awaited<ReturnType<typeof getApiTemplates>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplates>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiTemplatesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const postApiTemplates = (
+    createGameTemplateRequestDTO: CreateGameTemplateRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameTemplateResponseDTO>(
+      {url: `/api/templates`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createGameTemplateRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiTemplatesMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: CreateGameTemplateRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: CreateGameTemplateRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiTemplates>>, {data: CreateGameTemplateRequestDTO}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiTemplates(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiTemplates>>>
+    export type PostApiTemplatesMutationBody = CreateGameTemplateRequestDTO
+    export type PostApiTemplatesMutationError = ErrorType<unknown>
+
+    export const usePostApiTemplates = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTemplates>>, TError,{data: CreateGameTemplateRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof postApiTemplates>>,
+        TError,
+        {data: CreateGameTemplateRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiTemplatesMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const getApiTemplatesId = (
+    id: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<GameTemplateResponseDTO>(
+      {url: `/api/templates/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiTemplatesIdQueryKey = (id: number,) => {
+    return [`/api/templates/${id}`] as const;
+    }
+
+    
+export const getGetApiTemplatesIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplatesId>>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplatesId>>> = ({ signal }) => getApiTemplatesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiTemplatesIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplatesId>>>
+export type GetApiTemplatesIdInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiTemplatesIdInfiniteQueryOptions(id,options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiTemplatesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiTemplatesId>>> = ({ signal }) => getApiTemplatesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiTemplatesId>>>
+export type GetApiTemplatesIdQueryError = ErrorType<unknown>
+
+
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiTemplatesId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiTemplatesId<TData = Awaited<ReturnType<typeof getApiTemplatesId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiTemplatesId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiTemplatesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const putApiTemplatesId = (
+    id: number,
+    createGameTemplateRequestDTO: CreateGameTemplateRequestDTO,
+ ) => {
+      
+      
+      return customClient<GameTemplateResponseDTO>(
+      {url: `/api/templates/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: createGameTemplateRequestDTO
+    },
+      );
+    }
+  
+
+
+export const getPutApiTemplatesIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: number;data: CreateGameTemplateRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: number;data: CreateGameTemplateRequestDTO}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiTemplatesId>>, {id: number;data: CreateGameTemplateRequestDTO}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiTemplatesId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiTemplatesId>>>
+    export type PutApiTemplatesIdMutationBody = CreateGameTemplateRequestDTO
+    export type PutApiTemplatesIdMutationError = ErrorType<unknown>
+
+    export const usePutApiTemplatesId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiTemplatesId>>, TError,{id: number;data: CreateGameTemplateRequestDTO}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof putApiTemplatesId>>,
+        TError,
+        {id: number;data: CreateGameTemplateRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiTemplatesIdMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const deleteApiTemplatesId = (
+    id: number,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/templates/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiTemplatesIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiTemplatesId>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiTemplatesId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiTemplatesId>>>
+    
+    export type DeleteApiTemplatesIdMutationError = ErrorType<unknown>
+
+    export const useDeleteApiTemplatesId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTemplatesId>>, TError,{id: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiTemplatesId>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiTemplatesIdMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
@@ -238,34 +1699,179 @@ export function useGetApiHealth<TData = Awaited<ReturnType<typeof getApiHealth>>
 
 
 
-export const postApiW3Validate = (
-    validateHtmlRequestDTO: ValidateHtmlRequestDTO,
+export const getApiSongs = (
+    
  signal?: AbortSignal
 ) => {
       
       
-      return customClient<W3ValidationResponseDTO>(
-      {url: `/api/W3/validate`, method: 'POST',
+      return customClient<SongResponseDTO[]>(
+      {url: `/api/Songs`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiSongsQueryKey = () => {
+    return [`/api/Songs`] as const;
+    }
+
+    
+export const getGetApiSongsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiSongs>>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongs>>> = ({ signal }) => getApiSongs(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongs>>>
+export type GetApiSongsInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongs>>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongs>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongs>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongs>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongs>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongs>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiSongsQueryOptions = <TData = Awaited<ReturnType<typeof getApiSongs>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongs>>> = ({ signal }) => getApiSongs(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongs>>>
+export type GetApiSongsQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongs<TData = Awaited<ReturnType<typeof getApiSongs>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongs>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongs<TData = Awaited<ReturnType<typeof getApiSongs>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongs>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongs<TData = Awaited<ReturnType<typeof getApiSongs>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongs<TData = Awaited<ReturnType<typeof getApiSongs>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const postApiSongs = (
+    createSongRequestDTO: CreateSongRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<SongResponseDTO>(
+      {url: `/api/Songs`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: validateHtmlRequestDTO, signal
+      data: createSongRequestDTO, signal
     },
       );
     }
   
 
 
-export const getPostApiW3ValidateMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiW3Validate>>, TError,{data: ValidateHtmlRequestDTO}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiW3Validate>>, TError,{data: ValidateHtmlRequestDTO}, TContext> => {
+export const getPostApiSongsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSongs>>, TError,{data: CreateSongRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiSongs>>, TError,{data: CreateSongRequestDTO}, TContext> => {
 const {mutation: mutationOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiW3Validate>>, {data: ValidateHtmlRequestDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSongs>>, {data: CreateSongRequestDTO}> = (props) => {
           const {data} = props ?? {};
 
-          return  postApiW3Validate(data,)
+          return  postApiSongs(data,)
         }
 
         
@@ -273,52 +1879,197 @@ const {mutation: mutationOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiW3ValidateMutationResult = NonNullable<Awaited<ReturnType<typeof postApiW3Validate>>>
-    export type PostApiW3ValidateMutationBody = ValidateHtmlRequestDTO
-    export type PostApiW3ValidateMutationError = ErrorType<unknown>
+    export type PostApiSongsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiSongs>>>
+    export type PostApiSongsMutationBody = CreateSongRequestDTO
+    export type PostApiSongsMutationError = ErrorType<unknown>
 
-    export const usePostApiW3Validate = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiW3Validate>>, TError,{data: ValidateHtmlRequestDTO}, TContext>, }
+    export const usePostApiSongs = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSongs>>, TError,{data: CreateSongRequestDTO}, TContext>, }
 ): UseMutationResult<
-        Awaited<ReturnType<typeof postApiW3Validate>>,
+        Awaited<ReturnType<typeof postApiSongs>>,
         TError,
-        {data: ValidateHtmlRequestDTO},
+        {data: CreateSongRequestDTO},
         TContext
       > => {
 
-      const mutationOptions = getPostApiW3ValidateMutationOptions(options);
+      const mutationOptions = getPostApiSongsMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
     
-export const postApiWebScraperScrape = (
-    scrapeUrlRequestDTO: ScrapeUrlRequestDTO,
+export const getApiSongsId = (
+    id: number,
  signal?: AbortSignal
 ) => {
       
       
-      return customClient<ScrapeUrlResponseDTO>(
-      {url: `/api/WebScraper/scrape`, method: 'POST',
+      return customClient<SongResponseDTO>(
+      {url: `/api/Songs/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiSongsIdQueryKey = (id: number,) => {
+    return [`/api/Songs/${id}`] as const;
+    }
+
+    
+export const getGetApiSongsIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsId>>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongsId>>> = ({ signal }) => getApiSongsId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongsId>>>
+export type GetApiSongsIdInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsId>>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsId>>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsIdInfiniteQueryOptions(id,options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiSongsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiSongsId>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongsId>>> = ({ signal }) => getApiSongsId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongsId>>>
+export type GetApiSongsIdQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsId<TData = Awaited<ReturnType<typeof getApiSongsId>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsId<TData = Awaited<ReturnType<typeof getApiSongsId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsId>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsId<TData = Awaited<ReturnType<typeof getApiSongsId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsId<TData = Awaited<ReturnType<typeof getApiSongsId>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const putApiSongsId = (
+    id: number,
+    createSongRequestDTO: CreateSongRequestDTO,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/Songs/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
-      data: scrapeUrlRequestDTO, signal
+      data: createSongRequestDTO
     },
       );
     }
   
 
 
-export const getPostApiWebScraperScrapeMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWebScraperScrape>>, TError,{data: ScrapeUrlRequestDTO}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiWebScraperScrape>>, TError,{data: ScrapeUrlRequestDTO}, TContext> => {
+export const getPutApiSongsIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiSongsId>>, TError,{id: number;data: CreateSongRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiSongsId>>, TError,{id: number;data: CreateSongRequestDTO}, TContext> => {
 const {mutation: mutationOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiWebScraperScrape>>, {data: ScrapeUrlRequestDTO}> = (props) => {
-          const {data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiSongsId>>, {id: number;data: CreateSongRequestDTO}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postApiWebScraperScrape(data,)
+          return  putApiSongsId(id,data,)
         }
 
         
@@ -326,21 +2077,361 @@ const {mutation: mutationOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiWebScraperScrapeMutationResult = NonNullable<Awaited<ReturnType<typeof postApiWebScraperScrape>>>
-    export type PostApiWebScraperScrapeMutationBody = ScrapeUrlRequestDTO
-    export type PostApiWebScraperScrapeMutationError = ErrorType<unknown>
+    export type PutApiSongsIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiSongsId>>>
+    export type PutApiSongsIdMutationBody = CreateSongRequestDTO
+    export type PutApiSongsIdMutationError = ErrorType<unknown>
 
-    export const usePostApiWebScraperScrape = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiWebScraperScrape>>, TError,{data: ScrapeUrlRequestDTO}, TContext>, }
+    export const usePutApiSongsId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiSongsId>>, TError,{id: number;data: CreateSongRequestDTO}, TContext>, }
 ): UseMutationResult<
-        Awaited<ReturnType<typeof postApiWebScraperScrape>>,
+        Awaited<ReturnType<typeof putApiSongsId>>,
         TError,
-        {data: ScrapeUrlRequestDTO},
+        {id: number;data: CreateSongRequestDTO},
         TContext
       > => {
 
-      const mutationOptions = getPostApiWebScraperScrapeMutationOptions(options);
+      const mutationOptions = getPutApiSongsIdMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
     
+export const deleteApiSongsId = (
+    id: number,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/Songs/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiSongsIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSongsId>>, TError,{id: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiSongsId>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiSongsId>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiSongsId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiSongsIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiSongsId>>>
+    
+    export type DeleteApiSongsIdMutationError = ErrorType<unknown>
+
+    export const useDeleteApiSongsId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSongsId>>, TError,{id: number}, TContext>, }
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiSongsId>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiSongsIdMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+export const getApiSongsDifficultyDifficulty = (
+    difficulty: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<SongResponseDTO[]>(
+      {url: `/api/Songs/difficulty/${difficulty}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiSongsDifficultyDifficultyQueryKey = (difficulty: number,) => {
+    return [`/api/Songs/difficulty/${difficulty}`] as const;
+    }
+
+    
+export const getGetApiSongsDifficultyDifficultyInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>, TError = ErrorType<unknown>>(difficulty: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsDifficultyDifficultyQueryKey(difficulty);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>> = ({ signal }) => getApiSongsDifficultyDifficulty(difficulty, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(difficulty),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsDifficultyDifficultyInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>
+export type GetApiSongsDifficultyDifficultyInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsDifficultyDifficultyInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>, TError = ErrorType<unknown>>(
+ difficulty: number, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsDifficultyDifficultyInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>, TError = ErrorType<unknown>>(
+ difficulty: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsDifficultyDifficultyInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>, TError = ErrorType<unknown>>(
+ difficulty: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsDifficultyDifficultyInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>, TError = ErrorType<unknown>>(
+ difficulty: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsDifficultyDifficultyInfiniteQueryOptions(difficulty,options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiSongsDifficultyDifficultyQueryOptions = <TData = Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError = ErrorType<unknown>>(difficulty: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsDifficultyDifficultyQueryKey(difficulty);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>> = ({ signal }) => getApiSongsDifficultyDifficulty(difficulty, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(difficulty),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsDifficultyDifficultyQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>>
+export type GetApiSongsDifficultyDifficultyQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsDifficultyDifficulty<TData = Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError = ErrorType<unknown>>(
+ difficulty: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsDifficultyDifficulty<TData = Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError = ErrorType<unknown>>(
+ difficulty: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsDifficultyDifficulty<TData = Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError = ErrorType<unknown>>(
+ difficulty: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsDifficultyDifficulty<TData = Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError = ErrorType<unknown>>(
+ difficulty: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsDifficultyDifficulty>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsDifficultyDifficultyQueryOptions(difficulty,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const getApiSongsCategoryCategory = (
+    category: SongCategoryDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<SongResponseDTO[]>(
+      {url: `/api/Songs/category/${category}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiSongsCategoryCategoryQueryKey = (category: SongCategoryDTO,) => {
+    return [`/api/Songs/category/${category}`] as const;
+    }
+
+    
+export const getGetApiSongsCategoryCategoryInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>, TError = ErrorType<unknown>>(category: SongCategoryDTO, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsCategoryCategoryQueryKey(category);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>> = ({ signal }) => getApiSongsCategoryCategory(category, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(category),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsCategoryCategoryInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>
+export type GetApiSongsCategoryCategoryInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsCategoryCategoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsCategoryCategory>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsCategoryCategoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsCategoryCategory>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsCategoryCategoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsCategoryCategoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>>, }
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsCategoryCategoryInfiniteQueryOptions(category,options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiSongsCategoryCategoryQueryOptions = <TData = Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError = ErrorType<unknown>>(category: SongCategoryDTO, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSongsCategoryCategoryQueryKey(category);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>> = ({ signal }) => getApiSongsCategoryCategory(category, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(category),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiSongsCategoryCategoryQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>>
+export type GetApiSongsCategoryCategoryQueryError = ErrorType<unknown>
+
+
+export function useGetApiSongsCategoryCategory<TData = Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsCategoryCategory>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsCategoryCategory<TData = Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsCategoryCategory>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiSongsCategoryCategory<TData = Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+
+export function useGetApiSongsCategoryCategory<TData = Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError = ErrorType<unknown>>(
+ category: SongCategoryDTO, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSongsCategoryCategory>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetApiSongsCategoryCategoryQueryOptions(category,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+

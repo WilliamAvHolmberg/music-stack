@@ -1,105 +1,177 @@
-# Project Overview: AI-Driven Web Accessibility Enhancement Tool
+DATAMODELL:
 
-## Context
-The European Accessibility Act (EAA) requires businesses to meet specific web accessibility standards by June 2025. This project aims to develop an AI-powered tool to help businesses achieve compliance by automatically analyzing and improving website accessibility, particularly focusing on older users (60+) and those with disabilities.
+1. Songs
+```
+- Id: unique identifier
+- Title: låttitel
+- Artist: artist/band
+- FirstLine: första raden (för "Första Raden"-rundan)
+- Year: utgivningsår
+- Difficulty: 1-3
+- Category: enum (Pop, Rock, Schlager, etc)
+- Language: enum (Swedish, English)
+```
 
-## Technical Objectives
+2. GameSession
+```
+- Id: unique identifier
+- CreatedAt: timestamp
+- Status: enum (Created, InProgress, Finished)
+- CurrentRoundNumber: int
+- CurrentTeamIndex: int
+```
 
-### Core System Components
+3. Team
+```
+- Id: unique identifier
+- GameSessionId: foreign key
+- Name: string
+- Score: int
+- Color: string (för visuell identifiering)
+```
 
-1. **Criteria Extraction Module**
-   - Input: EAA and WCAG 2.2 guidelines
-   - Process: LLM analysis to extract key accessibility criteria
-   - Output: Structured accessibility criteria for scoring
+4. Round
+```
+- Id: unique identifier
+- GameSessionId: foreign key
+- Type: enum (GuessTheMelody, FirstLine, ArtistQuiz)
+- Status: enum (NotStarted, InProgress, Completed)
+- CurrentSongId: foreign key (nullable)
+- TimeLeft: int (sekunder)
+```
 
-2. **Raw Data Collection Tool**
-   - Purpose: Website HTML/CSS extraction
-   - Requirements: Ability to parse and store complete website structure
-   - Output: Raw website data in analyzable format
+SPELFLÖDE:
 
-3. **Scoring Engine**
-   - Input: Website raw data + accessibility criteria
-   - Process: LLM-based analysis or deterministic algorithm
-   - Output: Numerical/categorical accessibility score
-   - Key Feature: Consistent, reproducible scoring methodology
+1. Startsida
+```
+- Knapp: "Starta nytt spel"
+- Knapp: "Spelregler"
+- (Optional) Highscore-lista från tidigare spel
+```
 
-4. **Improvement Recommendation System**
-   - Input: Raw data + criteria + current score
-   - Process: LLM analysis
-   - Output: High-level improvement recommendations
-   - Format: Actionable list of structural changes
+2. Spelkonfiguration
+```
+- Ange antal lag (2-4)
+- För varje lag:
+  * Namn
+  * Välja färg
+- Välj antal rundor (3-5)
+- Välj svårighetsgrad (Easy, Medium, Hard)
+```
 
-5. **Implementation Tool**
-   - Input: Original code + improvement recommendations
-   - Process: AI-driven code transformation
-   - Output: Improved HTML/CSS meeting accessibility criteria
-   - Integration: Compatible with Cursor or similar AI development tools
+3. Spelledarvy
+```
+- Översikt:
+  * Aktuell runda
+  * Poängställning
+  * Timer när relevant
+- Kontroller:
+  * Nästa runda
+  * Dela ut poäng
+  * Pausa/Återuppta timer
+  * Visa/Dölj ledtrådar
+```
 
-6. **Score Verification System**
-   - Purpose: Validate improvements
-   - Process: Compare original vs. modified website scores
-   - Feature: Iterative improvement capability
+4. Publikvy (huvudskärm)
+```
+- Alltid synligt:
+  * Poängställning
+  * Aktuell runda
+  * Timer när relevant
+- Runspecifikt innehåll:
+  * Första raden-text
+  * Artistquiz-ledtrådar
+  * "Gissa Melodin"-indikator
+```
 
-## Development Phases
+RUNDSPECIFIKATIONER:
 
-1. **Initial Testing Phase (By January 5)**
-   - Manual criteria extraction
-   - Basic scoring system
-   - Manual improvement recommendations
-   - Initial test with one user
+1. Gissa Melodin
+```
+Spelledarvy:
+- Visa: Låttitel + Artist
+- Kontroller: Start/Stopp timer
+- Poängknappar: +3 för rätt gissning
 
-2. **Refinement Phase (By January 12)**
-   - Finalized criteria
-   - Enhanced scoring system
-   - Improved recommendation system
-   - Additional user testing
+Publikvy:
+- Visa: "Runda 1: Gissa Melodin"
+- Timer: 30 sekunder
+- Lagindikator: Visar vilket lag som gissar
+```
 
-3. **System Integration (By January 19)**
-   - Final criteria implementation
-   - Completed scoring system
-   - Begin automation process
+2. Första Raden
+```
+Spelledarvy:
+- Visa: Hela låttexten (första 4 rader)
+- Kontroller: Visa nästa rad
+- Poängknappar: +2 per korrekt rad
 
-4. **Automation Phase (By February 2)**
-   - Full system automation
-   - End-to-end process integration
-   - Configurable parameters
+Publikvy:
+- Visa: Aktuell textrad
+- Indikator: Vilket lag som ska fortsätta
+```
 
-## Validation Requirements
+3. Artistquiz
+```
+Spelledarvy:
+- Visa: Artist + alla ledtrådar
+- Kontroller: Visa nästa ledtråd
+- Timer: 30 sekunder
+- Poängknappar: +3/+2/+1 beroende på antal ledtrådar
 
-### Testing Methodology
-- Comparative analysis of original vs. modified websites
-- User testing with both elderly (60+) and younger users
-- Measurement of objective metrics (time, clicks) and subjective experience
-- Multiple task completion scenarios
-- Control for environmental variables
+Publikvy:
+- Visa: Aktuella ledtrådar
+- Timer
+- Poängskala (3,2,1)
+```
 
-### Success Metrics
-- Improved accessibility scores
-- Reduced task completion time
-- Enhanced user experience ratings
-- Compliance with EAA requirements
-- Consistent scoring across multiple iterations
+TEKNISKA KRAV:
 
-## Technical Requirements
+1. State Management
+```
+- Speltillstånd ska vara realtid
+- Alla lag ska se samma information samtidigt
+- Automatisk uppdatering av poäng/timer
+```
 
-1. **Input Processing**
-   - HTML/CSS parsing capability
-   - Website structure analysis
-   - Semantic markup understanding
+2. Error Handling
+```
+- Hantera tappade anslutningar
+- Möjlighet att återuppta spel
+- Validering av poängutdelning
+```
 
-2. **AI Integration**
-   - LLM API connectivity
-   - Prompt engineering for consistent results
-   - Error handling and validation
+3. Prestanda
+```
+- Snabb laddning av nya rundor
+- Minimal latency för poänguppdateringar
+- Optimerad för mobil/tablet för spelledare
+```
 
-3. **Output Generation**
-   - Valid HTML/CSS generation
-   - Semantic structure preservation
-   - Cross-browser compatibility
-   - Accessibility standard compliance
+PRIORITERINGSORDNING FÖR IMPLEMENTATION:
 
-4. **System Architecture**
-   - Modular component design
-   - Iterative processing capability
-   - Error logging and reporting
-   - Performance optimization
+1. Fas 1 - Core
+```
+- Grundläggande datamodell
+- Skapa spel
+- Lägga till lag
+- Basal poänghantering
+```
+
+2. Fas 2 - Rundor
+```
+- Implementera Gissa Melodin
+- Implementera Första Raden
+- Implementera Artistquiz
+- Timer-funktionalitet
+```
+
+3. Fas 3 - Polish
+```
+- Förbättrad UI/UX
+- Animationer
+- Ljudeffekter
+- Statistik/highscore
+```
+
+Vill du att jag utvecklar någon del ytterligare eller ska vi börja med implementationen av någon specifik del?

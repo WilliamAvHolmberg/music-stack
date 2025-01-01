@@ -1,15 +1,14 @@
 using Serilog;
-using Api.W3;
 using Api.AI;
-using Api.WebScraping;
-using Api.Accessibility;
-using Api.Accessibility.Services;
-using Api.Accessibility.Services.Rules;
 using Api.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Api.Infrastructure;
+using Api.Shared.Infrastructure.Database;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.IO;
+using Api.Domain.Songs.Services;
+using Api.Domain.Songs.Repositories;
+using Api.Domain.Games.Services;
+using Api.Domain.Games.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +26,6 @@ builder.WebHost.UseUrls("http://0.0.0.0:5001");
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    // Trust the local Nginx proxy
     options.KnownProxies.Add(System.Net.IPAddress.Parse("127.0.0.1"));
 });
 
@@ -69,17 +67,6 @@ try
                 .AllowAnyHeader());
     });
 
-    // Add W3 HTML validation service
-    builder.Services.AddScoped<IW3Service, W3Service>();
-
-    // Add Web Scraping service
-    builder.Services.AddScoped<IWebScraperService, PlaywrightScraperService>();
-
-    // Add Accessibility services
-    builder.Services.AddScoped<IRuleEngine, RuleEngine>();
-    builder.Services.AddScoped<IAccessibilityAnalyzer, AccessibilityAnalyzer>();
-    builder.Services.AddScoped<ISection1Service, Section1Service>();
-
     // Add SQLite
     var dbPath = builder.Environment.IsProduction() 
         ? Path.Combine(Environment.GetEnvironmentVariable("DEPLOY_PATH") ?? "", settings.Database.SqlitePath)
@@ -90,6 +77,14 @@ try
 
     // Add HttpClient
     builder.Services.AddHttpClient();
+
+    // Add domain services
+    builder.Services.AddScoped<ISongRepository, SongRepository>();
+    builder.Services.AddScoped<ISongService, SongService>();
+    builder.Services.AddScoped<IGameRepository, GameRepository>();
+    builder.Services.AddScoped<IGameService, GameService>();
+    builder.Services.AddScoped<IGameTemplateRepository, GameTemplateRepository>();
+    builder.Services.AddScoped<IGameTemplateService, GameTemplateService>();
 
     // Add AI services
     builder.Services.AddScoped<OpenAIService>();
@@ -105,6 +100,11 @@ try
             _ => sp.GetRequiredService<OpenAIService>()
         };
     });
+
+    // Register services
+    builder.Services.AddScoped<IGameService, GameService>();
+    builder.Services.AddScoped<IGameTemplateService, GameTemplateService>();
+    builder.Services.AddScoped<ISongService, SongService>(); 
 
     // Add HttpContextAccessor for request context
     builder.Services.AddHttpContextAccessor();
@@ -134,21 +134,17 @@ try
     {
         app.UseSwagger(c =>
         {
-            // This sets up the JSON endpoint at /api/swagger/v1/swagger.json
             c.RouteTemplate = "api/swagger/{documentName}/swagger.json";
         });
         
         app.UseSwaggerUI(c =>
         {
-            // This sets up the Swagger UI at /api/swagger
             c.RoutePrefix = "api/swagger";
             c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "API v1");
         });
     }
 
-    // Important: UseForwardedHeaders must be called before other middleware
     app.UseForwardedHeaders();
-
     app.UseHttpsRedirection();
     app.UseCors("AllowAll");
     app.UseAuthorization();

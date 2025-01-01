@@ -1,17 +1,13 @@
 import { motion } from "framer-motion";
-import { cn } from "@/shared/utils/utils";
-import { Music2, User, Lightbulb, Trophy, Calendar } from 'lucide-react';
+import { Music2, User } from 'lucide-react';
 
 interface AnimatedRevealProps {
     title: string;
     artist: string;
-    extraInfo?: string;
-    points: number;
     isRevealed: boolean;
-    year: number;
 }
 
-export function AnimatedReveal({ title, artist, extraInfo, points, isRevealed, year }: AnimatedRevealProps) {
+export function AnimatedReveal({ title, artist, isRevealed }: AnimatedRevealProps) {
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -101,17 +97,6 @@ export function AnimatedReveal({ title, artist, extraInfo, points, isRevealed, y
                 <div className="text-2xl text-yellow-400 font-semibold">Artist</div>
                 <div className="text-5xl font-bold text-white/90">{artist}</div>
             </motion.div>
-
-            {/* <motion.div
-                variants={item}
-                className="relative space-y-2"
-            >
-                <motion.div variants={iconVariants} className="absolute -left-16 top-1/2 -translate-y-1/2">
-                    <Calendar className="w-12 h-12 text-yellow-400" />
-                </motion.div>
-                <div className="text-2xl text-yellow-400 font-semibold">År</div>
-                <div className="text-5xl font-bold text-white/90">{year}</div>
-            </motion.div> */}
         </motion.div>
     );
 } 

@@ -8,12 +8,9 @@ import {
     usePutApiGamesGameIdTeamsTeamIdScore,
     usePutApiGamesGameIdItemsNext,
     usePutApiGamesGameIdItemsPrevious,
-    usePutApiGamesGameIdTimerPause,
-    usePutApiGamesGameIdTimerResume,
-    usePutApiGamesGameIdTimerReset,
     usePutApiGamesGameIdItemsItemIdRevealToggle
 } from '@/shared/api/hooks/api';
-import type { TeamResponseDTO, GameSessionResponseDTO } from '@/shared/api/models';
+import type { TeamResponseDTO } from '@/shared/api/models';
 import { Input } from '@/shared/components/ui/input';
 import { GameLayout } from '@/shared/components/ui/game-layout';
 import { GameCard } from '@/shared/components/ui/game-card';
@@ -32,7 +29,7 @@ interface GameHostProps {
 
 const openInSpotify = (spotifyId: string) => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
+
     if (isMobile) {
         // Mobile: Open in new window first, then redirect to Spotify app
         window.open(`spotify://track/${spotifyId}?play=true`, '_blank');
@@ -53,9 +50,6 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
     const { mutateAsync: updateTeamScore } = usePutApiGamesGameIdTeamsTeamIdScore();
     const { mutateAsync: nextItem } = usePutApiGamesGameIdItemsNext();
     const { mutateAsync: prevItem } = usePutApiGamesGameIdItemsPrevious();
-    const { mutateAsync: pauseTimer } = usePutApiGamesGameIdTimerPause();
-    const { mutateAsync: resumeTimer } = usePutApiGamesGameIdTimerResume();
-    const { mutateAsync: resetTimer } = usePutApiGamesGameIdTimerReset();
     const { mutateAsync: revealAnswer } = usePutApiGamesGameIdItemsItemIdRevealToggle()
 
     const currentRound = game?.rounds?.find(r => r.status === 1);
@@ -64,9 +58,9 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
 
     // Add reveal handler
     const handleRevealAnswer = async () => {
-        if (!game || !currentRound || !currentRound.items) return;
+        if (!game || !currentRound || !currentRound.items || !currentRound.items[game.currentItemIndex]) return;
         try {
-            await revealAnswer({ gameId, itemId: currentRound.items[game.currentItemIndex].id });
+            await revealAnswer({ gameId, itemId: currentRound.items[game.currentItemIndex]!.id });
             toast({
                 title: "Answer revealed",
                 description: "The answer has been revealed to all players"
@@ -133,42 +127,6 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
         }
     };
 
-    const handleStartRound = async () => {
-        try {
-            const nextRound = game.rounds?.find(r => r.status === 0);
-            if (!nextRound) {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "No more rounds available"
-                });
-                return;
-            }
-
-            await startNewRound({
-                gameId,
-                data: {
-                    type: nextRound.type,
-                    title: nextRound.title || '',
-                    timeInMinutes: nextRound.timeInMinutes,
-                    instructions: nextRound.instructions || ''
-                }
-            });
-            toast({
-                title: "Round started",
-                description: `Starting ${nextRound.title || 'next round'}`
-            });
-            refetchGame();
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Failed to start round"
-            });
-            console.error('Failed to start round:', error);
-        }
-    };
-
     const handleEndRound = async () => {
         try {
             await endCurrentRound({ gameId });
@@ -226,10 +184,6 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
     const currentTeamIndex = game.currentItemIndex % (game.teams?.length || 1);
     const completedRounds = game.rounds?.filter(r => r.status === 2).length || 0;
 
-    const isLastRound = (game: GameSessionResponseDTO) => {
-        return game.currentRoundIndex === (game.rounds?.length ?? 0) - 1;
-    };
-
     // Add navigation handlers
     const handleNextItem = async () => {
         if (!currentRound?.items || game.currentItemIndex >= currentRound.items.length - 1) {
@@ -268,51 +222,6 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
                 description: "Failed to navigate to previous item"
             });
             console.error('Failed to navigate to previous item:', error);
-        }
-    };
-
-    // Add timer control handlers
-    const handleTimerToggle = async () => {
-        try {
-            if (currentRound?.isPaused) {
-                await resumeTimer({ gameId });
-                toast({
-                    title: "Timer resumed",
-                    description: "The timer has been resumed"
-                });
-            } else {
-                await pauseTimer({ gameId });
-                toast({
-                    title: "Timer paused",
-                    description: "The timer has been paused"
-                });
-            }
-            refetchGame();
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Failed to toggle timer"
-            });
-            console.error('Failed to toggle timer:', error);
-        }
-    };
-
-    const handleTimerReset = async () => {
-        try {
-            await resetTimer({ gameId });
-            toast({
-                title: "Timer reset",
-                description: "The timer has been reset"
-            });
-            refetchGame();
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Failed to reset timer"
-            });
-            console.error('Failed to reset timer:', error);
         }
     };
 
@@ -390,9 +299,6 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
                     <CurrentRoundCard
                         game={game}
                         currentRound={currentRound}
-                        currentTeamIndex={currentTeamIndex}
-                        onTimerToggle={handleTimerToggle}
-                        onTimerReset={handleTimerReset}
                         onPrevItem={handlePrevItem}
                         onNextItem={handleNextItem}
                         onEndRound={handleEndRound}

@@ -53,12 +53,12 @@ export function GameSetup() {
             
             // Add teams sequentially
             for (let i = 0; i < teamNames.length; i++) {
-                if (teamNames[i].trim()) {
+                if (teamNames[i]?.trim()) {
                     await addTeam({
                         gameId: game.id,
                         data: {
-                            name: teamNames[i],
-                            color: TEAM_COLORS[i]
+                            name: teamNames[i]!,
+                            color: TEAM_COLORS[i]!
                         }
                     });
                 }

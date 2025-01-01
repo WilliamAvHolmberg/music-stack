@@ -8,7 +8,7 @@
 export type GameStatusDTO = typeof GameStatusDTO[keyof typeof GameStatusDTO];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const GameStatusDTO = {
   NUMBER_0: 0,
   NUMBER_1: 1,

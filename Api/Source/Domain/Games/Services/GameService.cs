@@ -1,28 +1,33 @@
 using Api.Domain.Games.Models;
 using Api.Domain.Games.Models.Requests;
 using Api.Domain.Games.Models.Responses;
-using Api.Domain.Games.Repositories;
 using Api.Domain.Songs.Services;
 using Api.Shared.Infrastructure.Exceptions;
+using Api.Shared.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Domain.Games.Services;
 
 public class GameService : IGameService
 {
-    private readonly IGameRepository _repository;
+    private readonly AppDbContext _context;
     private readonly ISongService _songService;
     private readonly ILogger<GameService> _logger;
 
-    public GameService(IGameRepository repository, ISongService songService, ILogger<GameService> logger)
+    public GameService(AppDbContext context, ISongService songService, ILogger<GameService> logger)
     {
-        _repository = repository;
+        _context = context;
         _songService = songService;
         _logger = logger;
     }
 
     public async Task<GameSessionResponse> CreateGameAsync(int templateId)
     {
-        var template = await _repository.GetTemplateAsync(templateId);
+        var template = await _context.GameTemplates
+            .Include(t => t.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(t => t.Id == templateId);
+
         if (template == null)
         {
             throw new KeyNotFoundException($"Template {templateId} not found");
@@ -37,7 +42,8 @@ public class GameService : IGameService
             CurrentItemIndex = 0
         };
 
-        await _repository.CreateGameAsync(game);
+        _context.GameSessions.Add(game);
+        await _context.SaveChangesAsync();
 
         // Copy rounds from template
         foreach (var templateRound in template.Rounds.OrderBy(r => r.OrderIndex))
@@ -54,7 +60,8 @@ public class GameService : IGameService
                 OrderIndex = templateRound.OrderIndex
             };
 
-            await _repository.AddRoundAsync(round);
+            _context.Rounds.Add(round);
+            await _context.SaveChangesAsync();
 
             // Copy items from template round
             foreach (var templateItem in templateRound.Items.OrderBy(i => i.OrderIndex))
@@ -71,8 +78,9 @@ public class GameService : IGameService
                     Year = templateItem.Year
                 };
 
-                await _repository.AddRoundItemAsync(item);
+                _context.RoundItems.Add(item);
             }
+            await _context.SaveChangesAsync();
         }
 
         return MapToGameSessionResponse(game);
@@ -80,13 +88,22 @@ public class GameService : IGameService
 
     public async Task<GameSessionResponse?> GetGameAsync(int id)
     {
-        var game = await _repository.GetByIdAsync(id);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == id);
+            
         return game != null ? MapToGameSessionResponse(game) : null;
     }
 
     public async Task<IEnumerable<GameSessionResponse>> GetActiveGamesAsync()
     {
-        var games = await _repository.GetActiveGamesAsync();
+        var games = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Where(g => g.Status != GameStatus.Finished)
+            .ToListAsync();
+            
         return games.Select(MapToGameSessionResponse);
     }
 
@@ -100,19 +117,27 @@ public class GameService : IGameService
             Score = 0
         };
 
-        await _repository.AddTeamAsync(team);
+        _context.Teams.Add(team);
+        await _context.SaveChangesAsync();
+        
         return MapToTeamResponse(team);
     }
 
     public async Task<RoundResponse> StartRoundAsync(int gameId, CreateRoundRequest request)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Rounds)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var rounds = await _repository.GetRoundsByGameIdAsync(gameId);
+        var rounds = await _context.Rounds
+            .Where(r => r.GameSessionId == gameId)
+            .ToListAsync();
+            
         var nextRound = rounds
             .Where(r => r.Status == RoundStatus.NotStarted)
             .OrderBy(r => r.OrderIndex)
@@ -124,23 +149,29 @@ public class GameService : IGameService
         }
 
         nextRound.Status = RoundStatus.InProgress;
-        await _repository.UpdateRoundAsync(nextRound);
+        await _context.SaveChangesAsync();
 
         game.CurrentRoundIndex = rounds.Count(r => r.Status != RoundStatus.NotStarted) - 1;
-        await _repository.UpdateGameAsync(game);
+        await _context.SaveChangesAsync();
 
         return MapToRoundResponse(nextRound);
     }
 
     public async Task<RoundResponse> EndRoundAsync(int gameId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Rounds)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var currentRound = await _repository.GetCurrentRoundAsync(gameId);
+        var currentRound = await _context.Rounds
+            .Include(r => r.Items)
+            .FirstOrDefaultAsync(r => r.GameSessionId == gameId && r.Status == RoundStatus.InProgress);
+            
         if (currentRound == null)
         {
             throw new InvalidOperationException("No active round found");
@@ -148,16 +179,16 @@ public class GameService : IGameService
 
         // Mark current round as completed
         currentRound.Status = RoundStatus.Completed;
-        await _repository.UpdateRoundAsync(currentRound);
+        await _context.SaveChangesAsync();
 
         // Update game status if this was the last round
-        var allRounds = await _repository.GetRoundsByGameIdAsync(gameId);
-        var hasMoreRounds = allRounds.Any(r => r.Status == RoundStatus.NotStarted);
+        var hasMoreRounds = await _context.Rounds
+            .AnyAsync(r => r.GameSessionId == gameId && r.Status == RoundStatus.NotStarted);
         
         if (!hasMoreRounds)
         {
             game.Status = GameStatus.Finished;
-            await _repository.UpdateGameAsync(game);
+            await _context.SaveChangesAsync();
         }
 
         return MapToRoundResponse(currentRound);
@@ -165,47 +196,62 @@ public class GameService : IGameService
 
     public async Task<GameSessionResponse> EndGameAsync(int id)
     {
-        var game = await _repository.GetByIdAsync(id);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == id);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {id} not found");
         }
 
         game.Status = GameStatus.Finished;
-        await _repository.UpdateGameAsync(game);
+        await _context.SaveChangesAsync();
 
         return MapToGameSessionResponse(game);
     }
 
     public async Task<TeamResponse> UpdateTeamScoreAsync(int gameId, int teamId, int score)
     {
-        var teams = await _repository.GetTeamsByGameIdAsync(gameId);
-        var team = teams.FirstOrDefault(t => t.Id == teamId);
+        var team = await _context.Teams
+            .FirstOrDefaultAsync(t => t.GameSessionId == gameId && t.Id == teamId);
+            
         if (team == null)
         {
             throw new KeyNotFoundException($"Team {teamId} not found");
         }
 
         team.Score = score;
-        await _repository.UpdateTeamAsync(team);
+        await _context.SaveChangesAsync();
 
         return MapToTeamResponse(team);
     }
 
     public async Task DeleteGameAsync(int id)
     {
-        var game = await _repository.GetByIdAsync(id);
-        if (game == null)
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == id);
+            
+        if (game != null)
         {
-            throw new KeyNotFoundException($"Game {id} not found");
+            _context.GameSessions.Remove(game);
+            await _context.SaveChangesAsync();
         }
-
-        await _repository.DeleteGameAsync(id);
     }
 
     public async Task<GameSessionResponse> StartGameAsync(int id)
     {
-        var game = await _repository.GetByIdAsync(id);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == id);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {id} not found");
@@ -225,19 +271,24 @@ public class GameService : IGameService
         game.CurrentRoundIndex = 0;
         game.CurrentItemIndex = 0;
 
-        await _repository.UpdateGameAsync(game);
+        await _context.SaveChangesAsync();
         return MapToGameSessionResponse(game);
     }
 
     public async Task<GameSessionResponse> NextItemAsync(int gameId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var currentRound = await _repository.GetCurrentRoundAsync(gameId);
+        var currentRound = game.Rounds.FirstOrDefault(r => r.Status == RoundStatus.InProgress);
         if (currentRound == null)
         {
             throw new InvalidOperationException("No active round found");
@@ -249,14 +300,19 @@ public class GameService : IGameService
         }
 
         game.CurrentItemIndex++;
-        await _repository.UpdateGameAsync(game);
+        await _context.SaveChangesAsync();
 
         return MapToGameSessionResponse(game);
     }
 
     public async Task<GameSessionResponse> PreviousItemAsync(int gameId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
@@ -268,87 +324,106 @@ public class GameService : IGameService
         }
 
         game.CurrentItemIndex--;
-        await _repository.UpdateGameAsync(game);
+        await _context.SaveChangesAsync();
 
         return MapToGameSessionResponse(game);
     }
 
     public async Task<GameSessionResponse> PauseTimerAsync(int gameId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var currentRound = await _repository.GetCurrentRoundAsync(gameId);
+        var currentRound = game.Rounds.FirstOrDefault(r => r.Status == RoundStatus.InProgress);
         if (currentRound == null)
         {
             throw new InvalidOperationException("No active round found");
         }
 
-        currentRound.TimeLeft = currentRound.TimeLeft; // Save current time
+        currentRound.TimeLeft = currentRound.TimeLeft;
         currentRound.IsPaused = true;
-        await _repository.UpdateRoundAsync(currentRound);
+        await _context.SaveChangesAsync();
 
         return MapToGameSessionResponse(game);
     }
 
     public async Task<GameSessionResponse> ResumeTimerAsync(int gameId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var currentRound = await _repository.GetCurrentRoundAsync(gameId);
+        var currentRound = game.Rounds.FirstOrDefault(r => r.Status == RoundStatus.InProgress);
         if (currentRound == null)
         {
             throw new InvalidOperationException("No active round found");
         }
 
         currentRound.IsPaused = false;
-        await _repository.UpdateRoundAsync(currentRound);
+        await _context.SaveChangesAsync();
 
         return MapToGameSessionResponse(game);
     }
 
     public async Task<GameSessionResponse> ResetTimerAsync(int gameId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var currentRound = await _repository.GetCurrentRoundAsync(gameId);
+        var currentRound = game.Rounds.FirstOrDefault(r => r.Status == RoundStatus.InProgress);
         if (currentRound == null)
         {
             throw new InvalidOperationException("No active round found");
         }
 
         currentRound.TimeLeft = currentRound.TimeInMinutes * 60;
-        await _repository.UpdateRoundAsync(currentRound);
+        await _context.SaveChangesAsync();
 
         return MapToGameSessionResponse(game);
     }
 
     public async Task<GameSessionResponse> UpdateGameStateAsync(int gameId, UpdateGameStateRequest request)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Teams)
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new KeyNotFoundException($"Game {gameId} not found");
         }
 
-        var currentRound = await _repository.GetCurrentRoundAsync(gameId);
+        var currentRound = game.Rounds.FirstOrDefault(r => r.Status == RoundStatus.InProgress);
         if (currentRound == null)
         {
             throw new InvalidOperationException("No active round found");
         }
 
-        // Update game state based on request
         if (request.TimeLeft.HasValue)
         {
             currentRound.TimeLeft = request.TimeLeft.Value;
@@ -359,13 +434,17 @@ public class GameService : IGameService
             currentRound.IsPaused = request.IsPaused.Value;
         }
 
-        await _repository.UpdateRoundAsync(currentRound);
+        await _context.SaveChangesAsync();
         return MapToGameSessionResponse(game);
     }
 
     public async Task RevealAnswerAsync(int gameId, int itemId)
     {
-        var game = await _repository.GetByIdAsync(gameId);
+        var game = await _context.GameSessions
+            .Include(g => g.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+            
         if (game == null)
         {
             throw new NotFoundException($"Game {gameId} not found");
@@ -384,7 +463,7 @@ public class GameService : IGameService
         }
 
         item.IsAnswerRevealed = !item.IsAnswerRevealed;
-        await _repository.UpdateGameAsync(game);
+        await _context.SaveChangesAsync();
     }
 
     private static GameSessionResponse MapToGameSessionResponse(GameSession game)

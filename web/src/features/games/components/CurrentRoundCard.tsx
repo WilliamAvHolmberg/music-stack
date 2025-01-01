@@ -1,6 +1,5 @@
-import { Music2, Play, Pause, RotateCcw, ChevronLeft, ChevronRight, Trophy, Music } from 'lucide-react';
+import { Music2, ChevronLeft, ChevronRight, Trophy, Music } from 'lucide-react';
 import { GameCard } from '@/shared/components/ui/game-card';
-import { GameTimer } from '@/shared/components/ui/game-timer';
 import { GameButton } from '@/shared/components/ui/game-button';
 import { Button } from '@/shared/components/ui/button';
 import type { GameSessionResponseDTO, RoundResponseDTO } from '@/shared/api/models';
@@ -8,9 +7,6 @@ import type { GameSessionResponseDTO, RoundResponseDTO } from '@/shared/api/mode
 interface CurrentRoundCardProps {
     game: GameSessionResponseDTO;
     currentRound?: RoundResponseDTO;
-    currentTeamIndex: number;
-    onTimerToggle: () => void;
-    onTimerReset: () => void;
     onPrevItem: () => void;
     onNextItem: () => void;
     onEndRound: () => void;
@@ -21,9 +17,6 @@ interface CurrentRoundCardProps {
 export function CurrentRoundCard({
     game,
     currentRound,
-    currentTeamIndex,
-    onTimerToggle,
-    onTimerReset,
     onPrevItem,
     onNextItem,
     onEndRound,
@@ -109,19 +102,19 @@ export function CurrentRoundCard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div className="text-sm text-muted-foreground mb-1">Current Item</div>
-                                    <div className="font-medium">{currentRound.items[game.currentItemIndex].title}</div>
-                                    <div className="text-sm">{currentRound.items[game.currentItemIndex].artist}</div>
-                                    {currentRound.items[game.currentItemIndex].extraInfo && (
+                                    <div className="font-medium">{currentRound?.items?.[game.currentItemIndex]?.title}</div>
+                                    <div className="text-sm">{currentRound?.items?.[game.currentItemIndex]?.artist}</div>
+                                    {currentRound?.items?.[game.currentItemIndex]?.extraInfo && (
                                         <div className="text-sm text-muted-foreground mt-1">
-                                            {currentRound.items[game.currentItemIndex].extraInfo}
+                                            {currentRound?.items?.[game.currentItemIndex]?.extraInfo}
                                         </div>
                                     )}
-                                    {currentRound.items && currentRound.items[game.currentItemIndex].spotifyId && onOpenSpotify && (
+                                    {currentRound?.items?.[game.currentItemIndex]?.spotifyId && onOpenSpotify && (
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             className="mt-2"
-                                            onClick={() => onOpenSpotify(currentRound.items![game.currentItemIndex].spotifyId!)}
+                                            onClick={() => onOpenSpotify(currentRound?.items?.[game.currentItemIndex]?.spotifyId!)}
                                         >
                                             <Music className="w-4 h-4 mr-2" />
                                             Open in Spotify
@@ -129,7 +122,7 @@ export function CurrentRoundCard({
                                     )}
                                 </div>
                                 <div className="text-2xl font-bold text-yellow-400">
-                                    {currentRound.items[game.currentItemIndex].points} pts
+                                    {currentRound?.items?.[game.currentItemIndex]?.points ?? 0} pts
                                 </div>
                             </div>
                         </div>

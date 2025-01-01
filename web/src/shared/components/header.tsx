@@ -1,4 +1,4 @@
-import { GraduationCap, Library, Globe, Code2, Accessibility, Music, ListMusic, Layout, GamepadIcon, PlusCircle } from 'lucide-react';
+import { Music, ListMusic, Layout, GamepadIcon, PlusCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/shared/utils/utils';
 import { AIModelSelector } from '../../features/ai/ai-model-selector';

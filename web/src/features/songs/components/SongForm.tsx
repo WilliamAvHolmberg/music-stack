@@ -84,9 +84,9 @@ export function SongForm() {
             if (result.success) {
                 form.reset(result.data);
             } else {
-                setJsonError(result.error.errors[0].message);
+                setJsonError(result.error.errors[0]?.message ?? 'Invalid JSON format');
             }
-        } catch (error) {
+        } catch {
             setJsonError('Invalid JSON format');
         }
     };
@@ -121,8 +121,8 @@ export function SongForm() {
                 });
             }
             navigate('/songs');
-        } catch (error) {
-            console.error('Failed to save song:', error);
+        } catch {
+            console.error('Failed to save song');
         }
     };
 

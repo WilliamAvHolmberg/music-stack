@@ -10,18 +10,15 @@ interface FirstLineDisplayProps {
     year: number;
 }
 
-export function FirstLineDisplay({ title, artist, points, isRevealed, extraInfo, year }: FirstLineDisplayProps) {
+export function FirstLineDisplay({ title, artist, isRevealed, extraInfo }: FirstLineDisplayProps) {
     return (
-        <BaseRoundDisplay points={points} isRevealed={isRevealed}>
+        <BaseRoundDisplay isRevealed={isRevealed}>
             {isRevealed ? (
                 <div className="w-full max-w-4xl mx-auto">
                     <AnimatedReveal
                         title={title}
                         artist={artist}
-                        points={points}
                         isRevealed={isRevealed}
-                        extraInfo={extraInfo}
-                        year={year}
                     />
                 </div>
             ) : (

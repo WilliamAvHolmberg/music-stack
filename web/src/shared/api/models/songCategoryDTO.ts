@@ -8,7 +8,7 @@
 export type SongCategoryDTO = typeof SongCategoryDTO[keyof typeof SongCategoryDTO];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const SongCategoryDTO = {
   NUMBER_0: 0,
   NUMBER_1: 1,

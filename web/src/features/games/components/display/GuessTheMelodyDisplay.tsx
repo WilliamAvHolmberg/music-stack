@@ -13,17 +13,14 @@ interface GuessTheMelodyDisplayProps {
 
 export function GuessTheMelodyDisplay(props: GuessTheMelodyDisplayProps) {
     return (
-        <BaseRoundDisplay points={props.points} isRevealed={props.isRevealed}>
+        <BaseRoundDisplay isRevealed={props.isRevealed}>
             {props.isRevealed ? (
                 <>
                     <div className="w-full max-w-4xl mx-auto">
                         <AnimatedReveal
                             title={props.title}
                             artist={props.artist}
-                            points={props.points}
                             isRevealed={props.isRevealed}
-                            extraInfo={props.extraInfo}
-                            year={props.year}
                         />
                     </div>
                 </>

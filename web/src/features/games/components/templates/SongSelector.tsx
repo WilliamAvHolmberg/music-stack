@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Music } from 'lucide-react';
 import {
     Select,

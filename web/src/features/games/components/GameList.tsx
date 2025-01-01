@@ -27,8 +27,9 @@ export function GameList() {
             await deleteGame({ id });
             toast.success("Game deleted successfully");
             refetch();
-        } catch (error: any) {
-            toast.error(error.response?.data || "Failed to delete game");
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: string } };
+            toast.error(err.response?.data || "Failed to delete game");
         }
     };
 

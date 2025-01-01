@@ -27,7 +27,7 @@ export function TemplateList() {
             await deleteTemplate({ id });
             toast.success("Template deleted successfully");
             refetch();
-        } catch (error) {
+        } catch {
             toast.error("Failed to delete template");
         }
     };

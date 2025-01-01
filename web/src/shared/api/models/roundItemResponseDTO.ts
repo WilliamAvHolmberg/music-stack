@@ -18,4 +18,5 @@ export interface RoundItemResponseDTO {
   spotifyId?: string | null;
   /** @nullable */
   title: string | null;
+  year: number;
 }

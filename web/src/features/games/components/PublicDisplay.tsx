@@ -1,8 +1,7 @@
-import { GameTimer } from '@/shared/components/ui/game-timer';
 import type { GameSessionResponseDTO, RoundResponseDTO } from '@/shared/api/models';
 import { cn } from '@/shared/utils/utils';
 import { getRoundDisplay } from './display/getRoundDisplay';
-import { Trophy, Loader2, Music2 } from 'lucide-react';
+import { Trophy, Music2 } from 'lucide-react';
 import { AnimatedScore } from './display/AnimatedScore';
 import { useEffect, useState } from 'react';
 
@@ -174,11 +173,12 @@ export function PublicDisplay({ game, currentRound, currentTeamIndex }: PublicDi
 
                 {/* Current Item */}
                 {currentItem && getRoundDisplay(currentRound.type, {
-                    title: currentItem.title,
-                    artist: currentItem.artist,
+                    title: currentItem.title!,
+                    artist: currentItem.artist!,
                     points: currentItem.points,
-                    isRevealed: currentItem.isAnswerRevealed,
-                    extraInfo: currentItem.extraInfo
+                    isRevealed: currentItem.isAnswerRevealed!,
+                    extraInfo: currentItem.extraInfo!,
+                    year: currentItem.year!
                 })}
             </div>
         </div>

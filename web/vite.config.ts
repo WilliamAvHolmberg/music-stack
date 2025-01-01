@@ -1,10 +1,24 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+// @ts-ignore
+import eslint from 'vite-plugin-eslint';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    eslint({
+      failOnError: false,
+      failOnWarning: false,
+      include: ['src/**/*.ts', 'src/**/*.tsx'],
+      lintOnStart: true,
+      emitWarning: true,
+      emitError: true,
+      cache: true,
+      fix: true
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

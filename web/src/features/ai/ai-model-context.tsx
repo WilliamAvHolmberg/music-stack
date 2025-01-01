@@ -18,7 +18,7 @@ export function AIModelProvider({ children }: { children: ReactNode }) {
       const found = AI_MODELS.find(m => m.id === parsed.id);
       if (found) return found;
     }
-    return AI_MODELS[0];
+    return AI_MODELS[0]!;
   });
 
   const handleSetModel = (model: AIModel) => {

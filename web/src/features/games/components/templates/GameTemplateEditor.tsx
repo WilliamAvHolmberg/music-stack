@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -22,11 +22,10 @@ import {
     usePostApiTemplates,
     usePutApiTemplatesId,
 } from '@/shared/api/hooks/api';
-import type { 
-    CreateGameTemplateRequestDTO, 
-    CreateTemplateRoundRequestDTO, 
-    CreateTemplateRoundItemRequestDTO,
-    RoundResponseDTO 
+import type {
+    CreateGameTemplateRequestDTO,
+    CreateTemplateRoundRequestDTO,
+    CreateTemplateRoundItemRequestDTO
 } from '@/shared/api/models';
 
 interface EditingItem {
@@ -65,7 +64,7 @@ export function GameTemplateEditor() {
             setName(template.name ?? '');
             setDescription(template.description ?? '');
             setIsPublic(template.isPublic ?? false);
-            setRounds(template.rounds?.map((round: RoundResponseDTO) => ({
+            setRounds(template.rounds?.map((round) => ({
                 title: round.title ?? '',
                 type: round.type ?? RoundType.GuessTheMelody,
                 timeInMinutes: round.timeInMinutes ?? 3,
@@ -138,7 +137,7 @@ export function GameTemplateEditor() {
     };
 
     const handleRemoveItem = (roundIndex: number, itemIndex: number) => {
-        setRounds(rounds.map((round, index) => 
+        setRounds(rounds.map((round, index) =>
             index === roundIndex
                 ? { ...round, items: round.items?.filter((_, i) => i !== itemIndex) }
                 : round
@@ -149,7 +148,7 @@ export function GameTemplateEditor() {
         if (!editingItem) return;
 
         const { roundIndex, itemIndex } = editingItem;
-        
+
         setRounds(rounds.map((round, i) => {
             if (i !== roundIndex) return round;
 
@@ -175,7 +174,7 @@ export function GameTemplateEditor() {
     };
 
     const handleUpdateRound = (index: number, updates: Partial<CreateTemplateRoundRequestDTO>) => {
-        setRounds(rounds.map((round, i) => 
+        setRounds(rounds.map((round, i) =>
             i === index ? { ...round, ...updates } : round
         ));
     };
@@ -258,9 +257,9 @@ export function GameTemplateEditor() {
                                                 {editingRound?.index === index ? (
                                                     <Input
                                                         value={editingRound.title}
-                                                        onChange={(e) => setEditingRound({ 
-                                                            ...editingRound, 
-                                                            title: e.target.value 
+                                                        onChange={(e) => setEditingRound({
+                                                            ...editingRound,
+                                                            title: e.target.value
                                                         })}
                                                         onKeyDown={(e) => {
                                                             if (e.key === 'Enter') {
@@ -286,9 +285,9 @@ export function GameTemplateEditor() {
                                                             className="h-6 w-6 p-0"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                setEditingRound({ 
-                                                                    index, 
-                                                                    title: round.title 
+                                                                setEditingRound({
+                                                                    index,
+                                                                    title: round.title
                                                                 });
                                                             }}
                                                         >
@@ -329,8 +328,8 @@ export function GameTemplateEditor() {
                                                 </Button>
                                             </div>
                                             {round.items?.map((item, itemIndex) => (
-                                                <Card 
-                                                    key={itemIndex} 
+                                                <Card
+                                                    key={itemIndex}
                                                     className="cursor-pointer hover:bg-accent/50 transition-colors"
                                                     onClick={() => handleEditItem(index, itemIndex, item)}
                                                 >
@@ -368,12 +367,18 @@ export function GameTemplateEditor() {
                                                 </Card>
                                             ))}
                                         </div>
-                                        
+
                                         {editingItem && editingItem.roundIndex === index && (
                                             <Card className="mt-4">
                                                 <CardContent className="py-4">
                                                     <RoundItemForm
-                                                        initialValues={editingItem.item as any}
+                                                        initialValues={{
+                                                            title: editingItem.item.title || '',
+                                                            artist: editingItem.item.artist || '',
+                                                            points: editingItem.item.points || 1,
+                                                            extraInfo: editingItem.item.extraInfo || '',
+                                                            spotifyId: editingItem.item.spotifyId || undefined
+                                                        }}
                                                         onSave={handleSaveItem}
                                                         onCancel={() => setEditingItem(null)}
                                                     />

@@ -6,9 +6,7 @@ using Api.Shared.Infrastructure.Database;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.IO;
 using Api.Domain.Songs.Services;
-using Api.Domain.Songs.Repositories;
 using Api.Domain.Games.Services;
-using Api.Domain.Games.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,11 +77,8 @@ try
     builder.Services.AddHttpClient();
 
     // Add domain services
-    builder.Services.AddScoped<ISongRepository, SongRepository>();
     builder.Services.AddScoped<ISongService, SongService>();
-    builder.Services.AddScoped<IGameRepository, GameRepository>();
     builder.Services.AddScoped<IGameService, GameService>();
-    builder.Services.AddScoped<IGameTemplateRepository, GameTemplateRepository>();
     builder.Services.AddScoped<IGameTemplateService, GameTemplateService>();
 
     // Add AI services
@@ -100,11 +95,6 @@ try
             _ => sp.GetRequiredService<OpenAIService>()
         };
     });
-
-    // Register services
-    builder.Services.AddScoped<IGameService, GameService>();
-    builder.Services.AddScoped<IGameTemplateService, GameTemplateService>();
-    builder.Services.AddScoped<ISongService, SongService>(); 
 
     // Add HttpContextAccessor for request context
     builder.Services.AddHttpContextAccessor();

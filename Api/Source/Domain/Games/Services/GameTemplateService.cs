@@ -1,37 +1,50 @@
 using Api.Domain.Games.Models;
 using Api.Domain.Games.Models.Requests;
 using Api.Domain.Games.Models.Responses;
-using Api.Domain.Games.Repositories;
+using Api.Shared.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Domain.Games.Services;
 
 public class GameTemplateService : IGameTemplateService
 {
-    private readonly IGameTemplateRepository _repository;
+    private readonly AppDbContext _context;
     private readonly ILogger<GameTemplateService> _logger;
 
-    public GameTemplateService(IGameTemplateRepository repository, ILogger<GameTemplateService> logger)
+    public GameTemplateService(AppDbContext context, ILogger<GameTemplateService> logger)
     {
-        _repository = repository;
+        _context = context;
         _logger = logger;
     }
 
     public async Task<IEnumerable<GameTemplateResponse>> GetTemplatesAsync()
     {
-        var templates = await _repository.GetAllAsync();
+        var templates = await _context.GameTemplates
+            .Include(t => t.Rounds)
+                .ThenInclude(r => r.Items)
+            .OrderByDescending(t => t.CreatedAt)
+            .ToListAsync();
+            
         return templates.Select(MapToResponse);
     }
 
     public async Task<GameTemplateResponse?> GetTemplateAsync(int id)
     {
-        var template = await _repository.GetByIdAsync(id);
+        var template = await _context.GameTemplates
+            .Include(t => t.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(t => t.Id == id);
+            
         return template != null ? MapToResponse(template) : null;
     }
 
     public async Task<GameTemplateResponse> UpsertTemplateAsync(int? id, CreateGameTemplateRequest request)
     {
         var template = id.HasValue 
-            ? await _repository.GetByIdAsync(id.Value) 
+            ? await _context.GameTemplates
+                .Include(t => t.Rounds)
+                    .ThenInclude(r => r.Items)
+                .FirstOrDefaultAsync(t => t.Id == id.Value)
             : new GameTemplate
             {
                 Name = request.Name,
@@ -48,6 +61,21 @@ public class GameTemplateService : IGameTemplateService
         template.Name = request.Name;
         template.Description = request.Description;
         template.IsPublic = request.IsPublic;
+
+        if (id.HasValue)
+        {
+            // Delete existing rounds and their items
+            var existingRounds = await _context.Rounds
+                .Include(r => r.Items)
+                .Where(r => r.GameTemplateId == template.Id)
+                .ToListAsync();
+
+            foreach (var round in existingRounds)
+            {
+                _context.RoundItems.RemoveRange(round.Items);
+                _context.Rounds.Remove(round);
+            }
+        }
 
         // Create rounds and items
         template.Rounds = request.Rounds.Select((r, index) => new Round
@@ -71,16 +99,33 @@ public class GameTemplateService : IGameTemplateService
         }).ToList();
 
         // Save changes
-        await _repository.UpsertAsync(template);
+        if (id.HasValue)
+        {
+            _context.GameTemplates.Update(template);
+        }
+        else
+        {
+            _context.GameTemplates.Add(template);
+        }
+        await _context.SaveChangesAsync();
 
         // Return updated template
-        var savedTemplate = await _repository.GetByIdAsync(template.Id);
+        var savedTemplate = await _context.GameTemplates
+            .Include(t => t.Rounds)
+                .ThenInclude(r => r.Items)
+            .FirstOrDefaultAsync(t => t.Id == template.Id);
+            
         return MapToResponse(savedTemplate!);
     }
 
     public async Task DeleteTemplateAsync(int id)
     {
-        await _repository.DeleteAsync(id);
+        var template = await _context.GameTemplates.FindAsync(id);
+        if (template != null)
+        {
+            _context.GameTemplates.Remove(template);
+            await _context.SaveChangesAsync();
+        }
     }
 
     private static GameTemplateResponse MapToResponse(GameTemplate template) => new()

@@ -1,75 +1,87 @@
 using Api.Domain.Songs.Models;
-using Api.Domain.Songs.Repositories;
+using Api.Shared.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Domain.Songs.Services;
 
 public class SongService : ISongService
 {
-    private readonly ISongRepository _songRepository;
+    private readonly AppDbContext _context;
     private readonly Random _random = new();
 
-    public SongService(ISongRepository songRepository)
+    public SongService(AppDbContext context)
     {
-        _songRepository = songRepository;
+        _context = context;
     }
 
     public async Task<Song?> GetSongAsync(int id)
     {
-        return await _songRepository.GetByIdAsync(id);
+        return await _context.Songs.FindAsync(id);
     }
 
     public async Task<IEnumerable<Song>> GetAllSongsAsync()
     {
-        return await _songRepository.GetAllAsync();
+        return await _context.Songs.ToListAsync();
     }
 
     public async Task<IEnumerable<Song>> GetSongsByDifficultyAsync(int difficulty)
     {
-        return await _songRepository.GetByDifficultyAsync(difficulty);
+        return await _context.Songs
+            .Where(s => s.Difficulty == difficulty)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Song>> GetSongsByCategoryAsync(SongCategory category)
     {
-        return await _songRepository.GetByCategoryAsync(category);
+        return await _context.Songs
+            .Where(s => s.Category == category)
+            .ToListAsync();
     }
 
     public async Task<Song> CreateSongAsync(Song song)
     {
-        return await _songRepository.AddAsync(song);
+        _context.Songs.Add(song);
+        await _context.SaveChangesAsync();
+        return song;
     }
 
     public async Task UpdateSongAsync(Song song)
     {
-        await _songRepository.UpdateAsync(song);
+        _context.Entry(song).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteSongAsync(int id)
     {
-        await _songRepository.DeleteAsync(id);
+        var song = await _context.Songs.FindAsync(id);
+        if (song != null)
+        {
+            _context.Songs.Remove(song);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<Song> GetRandomSongAsync(int? difficulty = null, SongCategory? category = null)
     {
-        var songs = await _songRepository.GetAllAsync();
-        var filteredSongs = songs.AsEnumerable();
+        var query = _context.Songs.AsQueryable();
 
         if (difficulty.HasValue)
         {
-            filteredSongs = filteredSongs.Where(s => s.Difficulty == difficulty.Value);
+            query = query.Where(s => s.Difficulty == difficulty.Value);
         }
 
         if (category.HasValue)
         {
-            filteredSongs = filteredSongs.Where(s => s.Category == category.Value);
+            query = query.Where(s => s.Category == category.Value);
         }
 
-        var songList = filteredSongs.ToList();
-        if (!songList.Any())
+        var count = await query.CountAsync();
+        if (count == 0)
         {
             throw new InvalidOperationException("No songs found matching the criteria");
         }
 
-        var randomIndex = _random.Next(songList.Count);
-        return songList[randomIndex];
+        var randomIndex = _random.Next(count);
+        return await query.Skip(randomIndex).FirstAsync();
     }
 } 

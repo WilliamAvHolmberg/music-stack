@@ -8,7 +8,7 @@
 export type RoundTypeDTO = typeof RoundTypeDTO[keyof typeof RoundTypeDTO];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const RoundTypeDTO = {
   NUMBER_0: 0,
   NUMBER_1: 1,

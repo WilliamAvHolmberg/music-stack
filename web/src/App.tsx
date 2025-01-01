@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/shared/components/ui/toaster';
+import { ConnectionStatus } from '@/shared/components/ConnectionStatus';
 import { AIModelProvider } from './features/ai/ai-model-context';
 import { RootLayout } from './shared/layouts/root-layout';
 import { gameRoutes } from './features/games/routes';
@@ -37,6 +38,7 @@ export function App() {
   return (
     <AIModelProvider>
       <BrowserRouter>
+        <ConnectionStatus />
         <Routes>
           <Route element={<RootLayout />}>
             <Route path="/" element={<WelcomePage />} />

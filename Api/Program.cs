@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.IO;
 using Api.Domain.Songs.Services;
 using Api.Domain.Games.Services;
+using Api.Domain.Games.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,9 +61,10 @@ try
     {
         options.AddPolicy("AllowAll",
             builder => builder
-                .AllowAnyOrigin()
+                .SetIsOriginAllowed(_ => true)
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                .AllowCredentials());
     });
 
     // Add SQLite
@@ -98,6 +100,12 @@ try
 
     // Add HttpContextAccessor for request context
     builder.Services.AddHttpContextAccessor();
+
+    // Add SignalR
+    builder.Services.AddSignalR();
+
+    // Add notification service
+    builder.Services.AddScoped<IGameNotificationService, GameNotificationService>();
 
     var app = builder.Build();
 
@@ -136,6 +144,7 @@ try
 
     app.UseForwardedHeaders();
     app.UseHttpsRedirection();
+    app.MapHub<GameHub>("/api/gamehub");
     app.UseCors("AllowAll");
     app.UseAuthorization();
     app.MapControllers();

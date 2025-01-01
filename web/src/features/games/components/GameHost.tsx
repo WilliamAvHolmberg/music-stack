@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
     useGetApiGamesId,
@@ -22,6 +21,7 @@ import { CurrentRoundCard } from './CurrentRoundCard';
 import { RoundOverview } from './RoundOverview';
 import { Users, ExternalLink } from 'lucide-react';
 import { PublicDisplay } from './PublicDisplay';
+import { useGameSubscription } from '@/shared/hooks/useGameSubscription';
 
 interface GameHostProps {
     mode?: 'default' | 'public';
@@ -56,6 +56,15 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
 
     const { toast } = useToast();
 
+    // Subscribe to game changes
+    useGameSubscription({
+        gameId,
+        onGameChanged: () => {
+            console.log('Game changed, refetching...');
+            refetchGame();
+        }
+    });
+
     // Add reveal handler
     const handleRevealAnswer = async () => {
         if (!game || !currentRound || !currentRound.items || !currentRound.items[game.currentItemIndex]) return;
@@ -75,17 +84,6 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
             console.error('Failed to reveal answer:', error);
         }
     };
-
-    // Poll for game updates
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (game?.id) {
-                refetchGame();
-            }
-        }, mode === 'public' ? 1000 : 2000);
-
-        return () => clearInterval(interval);
-    }, [refetchGame, game?.id, mode]);
 
     if (!game) {
         return <div>Loading...</div>;

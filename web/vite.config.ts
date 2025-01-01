@@ -27,7 +27,11 @@ export default defineConfig({
   server: {
     host: true,
     proxy: {
-      '/api': 'http://localhost:5001',
+      '/api': {
+        target: 'http://localhost:5001',
+        ws: true,
+        changeOrigin: true
+      },
       '/health': 'http://localhost:5001'
     },
   },

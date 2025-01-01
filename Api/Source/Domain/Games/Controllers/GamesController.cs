@@ -12,11 +12,16 @@ namespace Api.Domain.Games.Controllers;
 public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
+    private readonly IGameNotificationService _notificationService;
     private readonly ILogger<GamesController> _logger;
 
-    public GamesController(IGameService gameService, ILogger<GamesController> logger)
+    public GamesController(
+        IGameService gameService, 
+        IGameNotificationService notificationService,
+        ILogger<GamesController> logger)
     {
         _gameService = gameService;
+        _notificationService = notificationService;
         _logger = logger;
     }
 
@@ -26,6 +31,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.CreateGameAsync(request.GameTemplateId);
+            await _notificationService.NotifyGameChanged(game.Id);
             return Ok(game);
         }
         catch (Exception ex)
@@ -75,6 +81,7 @@ public class GamesController : ControllerBase
         try
         {
             var team = await _gameService.AddTeamAsync(gameId, request);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(team);
         }
         catch (KeyNotFoundException)
@@ -178,6 +185,7 @@ public class GamesController : ControllerBase
         try
         {
             var team = await _gameService.UpdateTeamScoreAsync(gameId, teamId, score);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(team);
         }
         catch (KeyNotFoundException)
@@ -197,6 +205,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.StartGameAsync(id);
+            await _notificationService.NotifyGameChanged(id);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -220,6 +229,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.NextItemAsync(gameId);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -238,6 +248,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.PreviousItemAsync(gameId);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -256,6 +267,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.PauseTimerAsync(gameId);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -270,6 +282,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.ResumeTimerAsync(gameId);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -284,6 +297,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.ResetTimerAsync(gameId);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -298,6 +312,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.UpdateGameStateAsync(gameId, request);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok(game);
         }
         catch (KeyNotFoundException)
@@ -316,6 +331,7 @@ public class GamesController : ControllerBase
         try 
         {
             await _gameService.RevealAnswerAsync(gameId, itemId);
+            await _notificationService.NotifyGameChanged(gameId);
             return Ok();
         }
         catch (NotFoundException)

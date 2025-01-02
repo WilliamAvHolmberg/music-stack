@@ -3,7 +3,7 @@
     "private": true,
     "version": "0.1.0",
     "scripts": {
-        "setup": "bash infra/scripts/setup-local.sh",
-        "deploy": "bash infra/scripts/deploy-local.sh"
+        "setup": "bash packages/infra/scripts/setup-local.sh",
+        "deploy": "bash packages/infra/scripts/deploy-local.sh"
     }
 }

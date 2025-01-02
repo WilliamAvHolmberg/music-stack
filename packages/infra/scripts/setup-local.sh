@@ -14,6 +14,6 @@ echo "Machine IP: $MACHINE_IP"
 echo "Deploy path: $DEPLOY_PATH"
 
 # Execute remote setup with required variables
-ssh root@$MACHINE_IP PROJECT_NAME="$PROJECT_NAME" DEPLOY_PATH="$DEPLOY_PATH" 'bash -s' < infra/scripts/setup.sh
+ssh root@$MACHINE_IP PROJECT_NAME="$PROJECT_NAME" DEPLOY_PATH="$DEPLOY_PATH" 'bash -s' < packages/infra/scripts/setup.sh
 
 echo "Local setup completed!" 

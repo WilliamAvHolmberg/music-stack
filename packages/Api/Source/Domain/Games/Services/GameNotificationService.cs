@@ -25,7 +25,7 @@ public class GameNotificationService : IGameNotificationService
         {
             _logger.LogInformation("Sending GameChanged notification for game {GameId}", gameId);
             await _hubContext.Clients.Group($"game_{gameId}")
-                .SendAsync("gamechanged", gameId);
+                .SendAsync("GameChanged", gameId);
             _logger.LogInformation("Successfully sent GameChanged notification for game {GameId}", gameId);
         }
         catch (Exception ex)

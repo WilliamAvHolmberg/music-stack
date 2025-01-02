@@ -20,17 +20,21 @@ echo "Starting local deployment for $PROJECT_NAME..."
 echo "Machine IP: $MACHINE_IP"
 echo "Deploy path: $DEPLOY_PATH"
 
-# Build frontend
+# Clean and build frontend
 echo "Building frontend..."
-cd "$ROOT_DIR/web"
+cd "$ROOT_DIR/packages/web"
+echo "Cleaning frontend build..."
+rm -rf dist node_modules/.vite
 npm run build
 tar czf web-dist.tar.gz -C dist .
 scp web-dist.tar.gz root@$MACHINE_IP:/tmp/
 rm web-dist.tar.gz
 
-# Build backend
+# Clean and build backend
 echo "Building backend..."
-cd "$ROOT_DIR/Api"
+cd "$ROOT_DIR/packages/api"
+echo "Cleaning backend build..."
+rm -rf bin obj
 dotnet publish -c Release
 cd bin/Release/net8.0/publish
 tar czf api-dist.tar.gz *
@@ -40,8 +44,8 @@ rm api-dist.tar.gz
 # Copy deployment files
 echo "Copying deployment files..."
 cd "$ROOT_DIR"
-scp infra/scripts/deploy.sh root@$MACHINE_IP:/tmp/deploy.sh
-scp infra/nginx/app.conf root@$MACHINE_IP:/tmp/app.conf
+scp packages/infra/scripts/deploy.sh root@$MACHINE_IP:/tmp/deploy.sh
+scp packages/infra/nginx/app.conf root@$MACHINE_IP:/tmp/app.conf
 
 # Execute remote deployment with required variables
 ssh root@$MACHINE_IP \

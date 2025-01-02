@@ -15,7 +15,6 @@ export function GameLayout({
     title,
     stars = 0,
     maxStars = 0,
-    layout = "default",
     className,
     children,
     action

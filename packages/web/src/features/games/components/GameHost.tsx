@@ -22,6 +22,7 @@ import { RoundOverview } from './RoundOverview';
 import { Users, ExternalLink } from 'lucide-react';
 import { PublicDisplay } from './PublicDisplay';
 import { useGameSubscription } from '@/shared/hooks/useGameSubscription';
+import { useCallback } from 'react';
 
 interface GameHostProps {
     mode?: 'default' | 'public';
@@ -59,10 +60,20 @@ export function GameHost({ mode = 'default' }: GameHostProps) {
     // Subscribe to game changes
     useGameSubscription({
         gameId,
-        onGameChanged: () => {
+        onGameChanged: useCallback(async () => {
             console.log('Game changed, refetching...');
-            refetchGame();
-        }
+            try {
+                await refetchGame();
+                console.log('Game refetch completed');
+            } catch (error) {
+                console.error('Failed to refetch game:', error);
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Failed to refresh game data"
+                });
+            }
+        }, [refetchGame, toast])
     });
 
     // Add reveal handler

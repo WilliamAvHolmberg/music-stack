@@ -32,7 +32,8 @@ class SignalRService {
             this.connection = new HubConnectionBuilder()
                 .withUrl('/api/gamehub', {
                     withCredentials: true,
-                    transport: HttpTransportType.WebSockets
+                    transport: HttpTransportType.WebSockets,
+                    headers: { 'Cache-Control': 'no-cache' }
                 })
                 .withAutomaticReconnect({
                     nextRetryDelayInMilliseconds: (retryContext) => {
@@ -80,17 +81,36 @@ class SignalRService {
                     state: this.connection?.state
                 });
                 this.reconnectAttempt = 0;
-                // Simple solution: reload page after reconnection
+                // Reload page after reconnection to ensure clean state
                 window.location.reload();
             });
 
-            // Add error handler for connection errors
-            this.connection.on('error', (error: Error) => {
-                console.error('SignalR Error:', error);
-                useConnectionStore.getState().setStatus('error', error.message || 'Connection error occurred');
+            // Register base event handlers before starting connection
+            this.connection.on('GameChanged', (gameId: number) => {
+                console.log('Received GameChanged event:', gameId);
+                console.log('Available callbacks:', Array.from(this.gameCallbacks.entries()));
+                const callback = this.gameCallbacks.get(gameId);
+                console.log('Found callback for game:', gameId, callback ? 'exists' : 'not found');
+                if (callback) {
+                    console.log('Executing callback for game:', gameId);
+                    callback(gameId);
+                }
             });
 
             await this.connection.start();
+            
+            // Wait for connection ID to be available
+            let retries = 0;
+            while (!this.connection.connectionId && retries < 5) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                retries++;
+                console.log('Waiting for connection ID, attempt:', retries);
+            }
+
+            if (!this.connection.connectionId) {
+                throw new Error('Failed to get connection ID after 5 seconds');
+            }
+
             useConnectionStore.getState().setStatus('connected');
             console.info('SignalR Connected successfully:', {
                 connectionId: this.connection.connectionId,
@@ -112,18 +132,23 @@ class SignalRService {
     public async joinGame(gameId: number): Promise<void> {
         try {
             await this.ensureConnection();
+            
+            if (!this.connection?.connectionId) {
+                throw new Error('No connection ID available');
+            }
+
             // Store game subscription for reconnection
             this.gameSubscriptions.set(gameId, () => this.handleReconnection(gameId));
 
             console.info('Attempting to join game:', {
                 gameId,
-                connectionId: this.connection?.connectionId,
-                state: this.connection?.state
+                connectionId: this.connection.connectionId,
+                state: this.connection.state
             });
-            await this.connection?.invoke('JoinGame', gameId);
+            await this.connection.invoke('JoinGame', gameId);
             console.info('Successfully joined game:', {
                 gameId,
-                connectionId: this.connection?.connectionId
+                connectionId: this.connection.connectionId
             });
         } catch (err) {
             console.error('Failed to join game:', {
@@ -169,14 +194,15 @@ class SignalRService {
         }
 
         // Store callback for resubscription
-        const gameId = parseInt(this.connection.connectionId?.split('_')[1] || '0');
+        const gameId = this.gameSubscriptions.keys().next().value;
+        console.log('Storing callback for game:', gameId);
         this.gameCallbacks.set(gameId, callback);
 
-        this.connection?.on('gamechanged', callback);
+        // No need to register handlers here as they're already registered in startConnection
         console.info('Subscribed to game changes');
 
         return () => {
-            this.connection?.off('gamechanged', callback);
+            console.log('Removing callback for game:', gameId);
             this.gameCallbacks.delete(gameId);
             console.info('Unsubscribed from game changes');
         };
@@ -185,12 +211,6 @@ class SignalRService {
     private async handleReconnection(gameId: number) {
         try {
             await this.connection?.invoke('JoinGame', gameId);
-            // Re-register the event handler
-            const callback = this.gameCallbacks.get(gameId);
-            if (callback) {
-                this.connection?.off('gamechanged', callback); // Remove old handler
-                this.connection?.on('gamechanged', callback);  // Add new handler
-            }
             console.info('Resubscribed to game after reconnection:', gameId);
         } catch (error) {
             console.error('Failed to resubscribe after reconnection:', error);
